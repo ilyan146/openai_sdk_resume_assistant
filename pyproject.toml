@@ -13,10 +13,12 @@ dependencies = [
     "fastmcp>=2.10.5",
     "gradio>=5.37.0",
     "loguru>=0.7.3",
+    "mcp-server-fetch>=2025.1.17",
     "openai>=1.96.1",
     "openai-agents>=0.2.0",
     "pydantic>=2.11.7",
     "pypdf2>=3.0.1",
+    "sendgrid>=6.12.4",
 ]
 
 [build-system]
