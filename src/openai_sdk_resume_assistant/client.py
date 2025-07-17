@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 from loguru import logger
 from openai import AzureOpenAI
 
-load_dotenv()
+load_dotenv(override=True)
 
 """
 If using Azure DefaultAzureCredential, 

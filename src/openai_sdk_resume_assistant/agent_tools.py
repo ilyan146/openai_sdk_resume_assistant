@@ -3,11 +3,17 @@ from typing import Dict
 
 import sendgrid  # type: ignore
 from dotenv import load_dotenv
+from fastmcp import FastMCP
 from sendgrid.helpers.mail import Content, Email, Mail, To  # type: ignore
 
 load_dotenv(override=True)
 
 
+# Create a mcp server
+mcp = FastMCP(name="tools_server")
+
+
+@mcp.tool(name="send_email_tool")
 def send_email(subject: str, body: str) -> Dict[str, str]:
     sg = sendgrid.SendGridAPIClient(api_key=os.getenv("SENDGRID_API_KEY"))
     from_email = Email("mohamed.ilyan@boskalis.com")
@@ -18,3 +24,7 @@ def send_email(subject: str, body: str) -> Dict[str, str]:
     print("Email response", response.status_code)
 
     return {"status": "success"}
+
+
+if __name__ == "__main__":
+    mcp.run(transport="stdio")
