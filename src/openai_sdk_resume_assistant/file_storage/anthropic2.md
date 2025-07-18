@@ -1,0 +1,2 @@
+### Anthropic Company Summary:
+Anthropic is an AI safety and research company dedicated to constructing stable and interpretable AI models. Founded by ex-OpenAI members, including Dario Amodei, Anthropic is committed to aligning AI systems with human values, ensuring their societal benefits. The company tackles ethical and safety challenges within AI through innovative models and frameworks.
