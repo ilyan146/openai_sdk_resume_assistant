@@ -5,7 +5,7 @@ from agents import Agent, Runner
 from agents.mcp import MCPServerStdio
 
 
-class BaseAgent:
+class AIAgent:
     """
     This is the base agent class that can be used to create agents with tools that are served through MCP servers.
     """

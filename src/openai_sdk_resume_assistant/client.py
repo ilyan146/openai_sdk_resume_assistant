@@ -1,9 +1,10 @@
 import os
 
+from agents import set_default_openai_api, set_default_openai_client, set_tracing_disabled
 from azure.identity import InteractiveBrowserCredential, get_bearer_token_provider
 from dotenv import load_dotenv
 from loguru import logger
-from openai import AzureOpenAI
+from openai import AsyncAzureOpenAI, AzureOpenAI
 
 load_dotenv(override=True)
 
@@ -43,6 +44,21 @@ class AzureAIClient(AzureOpenAI):
             return token_provider
         except Exception as e:
             raise RuntimeError(f" Failed to initialize Azure Credential: {e}") from e
+
+    # Set credential for openai client and defaults
+    def set_openai_client_defaults(self):
+        # make available the LLM
+        load_dotenv(override=True)
+
+        openai_client = AsyncAzureOpenAI(
+            azure_endpoint=self.azure_endpoint, api_version=self.api_version, azure_ad_token_provider=self.token_provider
+        )
+        # Set default client and configs
+        set_default_openai_client(openai_client)
+        set_default_openai_api("chat_completions")
+        set_tracing_disabled(True)
+
+        return openai_client
 
 
 class AzureAIChatModel(AzureAIClient):
