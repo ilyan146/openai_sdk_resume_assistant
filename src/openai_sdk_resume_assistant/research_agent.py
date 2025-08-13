@@ -60,6 +60,7 @@ async def main(user_input: str):
     # Set the azure ai client defaults
     client = AzureAIClient()
     _openai_client = client.set_openai_client_defaults()
+
     response = await research_agent.run_agent_with_mcp(user_input)
     return response
 
