@@ -5,12 +5,13 @@ from src.openai_sdk_resume_assistant.client import AzureAIClient
 
 RESEARCH_AGENT_INSTRUCTIONS = """
 You are a research agent that can use tools for browsing the internet and 
-you can also have access to my file system. 
+you also have access to my file system. 
 You are highly capable to accomplish your tasks independently. 
 This includes accepting all cookies and clicking 'not now' as appropriate to get the content you need. 
 If one website isn't fruitful, try another. 
 Be persistent until you are able to solve your assignment, 
 trying different options and sites are needed.
+If the amount of information in one site is too large, please summarize it before using it.
 """
 
 
@@ -39,7 +40,7 @@ async def main(user_input: str):
     """
     Run the research agent with the provided user input.
     """
-    # Set the azureAI client defaults
+    # Set the AzureAI client defaults
     client = AzureAIClient()
     _openai_client = client.set_openai_client_defaults()
 
@@ -50,6 +51,18 @@ async def main(user_input: str):
 if __name__ == "__main__":
     import asyncio
 
-    user = "Hey get me some useful information about Hong Kong and where can I go when there is a typhoon."
-    result = asyncio.run(main(user))
+    user = (
+        "Hey get me some useful information about Hong Kong and where can I go when there is a typhoon and please "
+        "write the information to a file named 'hong_kong_typhoon_info.md' as a markdown file."
+    )
+
+    muthuvapa_input = (
+        "Please find all the contact information for the RTO office chennai and write to the file "
+        "'rto_chennai_contact_info.md' as a markdown file."
+    )
+
+    news_input = "Find top news from BBC about Gaza Israel conflict and write to file gaza_report.md as a markdown file."
+
+    # result = asyncio.run(main(user))
+    result = asyncio.run(main(news_input))
     print("Response from Research Agent:", result)
