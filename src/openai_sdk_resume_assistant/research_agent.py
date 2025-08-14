@@ -1,6 +1,6 @@
 import os
 
-from openai_sdk_resume_assistant.base_agent import AIAgent
+from src.openai_sdk_resume_assistant.base_agent import AIAgent
 from src.openai_sdk_resume_assistant.client import AzureAIClient
 
 RESEARCH_AGENT_INSTRUCTIONS = """
@@ -34,30 +34,12 @@ research_agent = AIAgent(
     mcp_params=params_list,
 )
 
-# @asynccontextmanager
-# async def get_mcp_servers(params_list):
-#     async with AsyncExitStack() as stack:
-#         tool_mcp_servers = [
-#             await stack.enter_async_context(MCPServerStdio(params=params, client_session_timeout_seconds=60))
-#             for params in params_list
-#             ]
-#         yield tool_mcp_servers
-
-
-# async def create_tool_agent(mcp_servers_list:list):
-#     tool_agent = Agent(
-#         name="ToolAgent",
-#         instructions=TOOL_AGENT_INSTRUCTIONS,
-#         model="gpt-4o",
-#         mcp_servers=mcp_servers_list)
-#     return tool_agent
-
 
 async def main(user_input: str):
     """
     Run the research agent with the provided user input.
     """
-    # Set the azure ai client defaults
+    # Set the azureAI client defaults
     client = AzureAIClient()
     _openai_client = client.set_openai_client_defaults()
 
@@ -68,6 +50,6 @@ async def main(user_input: str):
 if __name__ == "__main__":
     import asyncio
 
-    user_input = "Hey get me some useful information about Hong Kong and where can I go when there is a typhoon."
-    response = asyncio.run(main(user_input))
-    print("Response from Research Agent:", response)
+    user = "Hey get me some useful information about Hong Kong and where can I go when there is a typhoon."
+    result = asyncio.run(main(user))
+    print("Response from Research Agent:", result)
