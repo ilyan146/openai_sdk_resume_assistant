@@ -1,7 +1,7 @@
 import os
 
-from src.openai_sdk_resume_assistant.base_agent import AIAgent
-from src.openai_sdk_resume_assistant.client import AzureAIClient
+from openai_sdk_resume_assistant.base_agent import AIAgent
+from openai_sdk_resume_assistant.client import AzureAIClient
 
 RESEARCH_AGENT_INSTRUCTIONS = """
 You are a research agent that can use tools for browsing the internet and 
@@ -23,9 +23,11 @@ files_params = {"command": "npx", "args": ["-y", "@modelcontextprotocol/server-f
 
 # send_email_params = {"command": "uv", "args": ["run", "agent_tools.py"]}
 
+memory_params = {"command": "npx", "args": ["-y", "mcp-memory-libsql"], "env": {"LIBSQL_URL": "file:./memory/ed.db"}}
+
 
 # Create mcp servers with the params
-params_list = [playwright_params, files_params]
+params_list = [playwright_params, files_params, memory_params]
 
 
 research_agent = AIAgent(
@@ -61,8 +63,13 @@ if __name__ == "__main__":
         "'rto_chennai_contact_info.md' as a markdown file."
     )
 
-    news_input = "Find top news from BBC about Gaza Israel conflict and write to file gaza_report.md as a markdown file."
+    news_input = (
+        "My name is Ilyan and I am a Journalist, please find top news from BBC about Gaza Israel conflict "
+        "and write to file gaza_report.md as a markdown file."
+    )
 
-    # result = asyncio.run(main(user))
-    result = asyncio.run(main(news_input))
+    check_input = "Hey what is my name and what are the news that you searched for before ?"
+
+    # result = asyncio.run(main(news_input))
+    result = asyncio.run(main(check_input))
     print("Response from Research Agent:", result)

@@ -13,8 +13,4 @@ Be professional and engaging, as if talking to a potential client or future empl
 who came across the resume or profile.
 """  # TODO: To be added with new tools to record unknown questions and send emails
 
-resume_agent = AIAgent(
-    name="ResumeAgent",
-    instructions=RESUME_AGENT_INSTRUCTIONS,
-    model="gpt-4o",
-)
+resume_agent = AIAgent(name="ResumeAgent", instructions=RESUME_AGENT_INSTRUCTIONS, model="gpt-4o", mcp_params={})
