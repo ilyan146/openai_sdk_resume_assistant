@@ -19,14 +19,9 @@ async def main():
     return mcp_tools
 
 
-async def agent_main():
-    agent_params = {"command": "npx", "args": ["-y", "mcp-memory-libsql"], "env": {"LIBSQL_URL": "file:./memory/ed2.db"}}
+async def agent_main(request: str):
+    agent_params = {"command": "npx", "args": ["-y", "mcp-memory-libsql"], "env": {"LIBSQL_URL": "file:./memory/ilyan.db"}}
     instructions = "You use your entity tools as a persistent memory to store and recall information about your conversations."
-    request1 = (
-        "My name's Ed. I'm an LLM engineer. I'm teaching a course about AI Agents, including the incredible "
-        "MCP protocol. MCP is a protocol for connecting agents with tools, "
-        "resources and prompt templates, and makes it easy to integrate AI agents with capabilities."
-    )
 
     memory_agent = AIAgent(
         name="MemoryAgent",
@@ -39,21 +34,27 @@ async def agent_main():
     client = AzureAIClient()
     _openai_client = client.set_openai_client_defaults()
 
-    response1 = await memory_agent.run_agent_with_mcp(request1)
+    response = await memory_agent.run_agent_with_mcp(request)
 
-    print("Respone 1: ", response1)
-
-    request2 = "My name's Ed. What do you know about me?"
-
-    response2 = await memory_agent.run_agent_with_mcp(request2)
-    print("Response 2:", response2)
-    return response2
+    return response
 
 
 if __name__ == "__main__":
-    # tools = asyncio.run(main())
-    # for tool in tools:
-    #     print(tool)
+    tools = asyncio.run(main())
+    print("Tools available from the MCP server: ")
+    for tool in tools:
+        print(tool)
 
-    response = asyncio.run(agent_main())
+    # request= (
+    #     "My name's Ilyan. I'm an AI engineer. I'm teaching a course about AI Agents, including the incredible "
+    #     "MCP protocol. MCP is a protocol for connecting agents with tools, "
+    #     "resources and prompt templates, and makes it easy to integrate AI agents with capabilities."
+    # )
+
+    # request = "My name's Ilyan. What do you know about me?"
+
+    request = "Who is an AI engineer that you know of ?"
+
+    response = asyncio.run(agent_main(request))
+
     print("Final response from agent:", response)
