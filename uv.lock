@@ -1836,7 +1836,6 @@ dependencies = [
     { name = "azure-identity" },
     { name = "dotenv" },
     { name = "fastmcp" },
-    { name = "gradio" },
     { name = "loguru" },
     { name = "mcp-server-fetch" },
     { name = "notebook" },
@@ -1850,6 +1849,7 @@ dependencies = [
 
 [package.dev-dependencies]
 dev = [
+    { name = "gradio" },
     { name = "ipykernel" },
     { name = "pre-commit" },
     { name = "pyright" },
@@ -1860,7 +1860,6 @@ requires-dist = [
     { name = "azure-identity", specifier = ">=1.23.1" },
     { name = "dotenv", specifier = ">=0.9.9" },
     { name = "fastmcp", specifier = ">=2.10.5" },
-    { name = "gradio", specifier = ">=5.37.0" },
     { name = "loguru", specifier = ">=0.7.3" },
     { name = "mcp-server-fetch", specifier = ">=2025.1.17" },
     { name = "notebook", specifier = ">=7.4.5" },
@@ -1874,6 +1873,7 @@ requires-dist = [
 
 [package.metadata.requires-dev]
 dev = [
+    { name = "gradio", specifier = ">=5.49.1" },
     { name = "ipykernel", specifier = ">=6.29.5" },
     { name = "pre-commit", specifier = ">=4.2.0" },
     { name = "pyright", specifier = ">=1.1.406" },

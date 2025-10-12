@@ -1,5 +1,7 @@
-# ARG PYTHON_VERSION=3.12
-FROM ghcr.io/astral-sh/uv:python3.11-bookworm-slim AS base
+ARG PYTHON_VERSION=3.12
+# FROM ghcr.io/astral-sh/uv:python3.11-bookworm-slim AS base
+FROM ghcr.io/astral-sh/uv:python${PYTHON_VERSION}-bookworm AS base
+
 
 # Prevents Python from writing pyc files.
 ENV PYTHONDONTWRITEBYTECODE=1
@@ -28,6 +30,7 @@ WORKDIR /app
 
 # Copy dependency files
 COPY pyproject.toml uv.lock* .env* ./
+# COPY pyproject.toml .env* ./
 
 # Install dependencies using uv
 RUN --mount=type=cache,target=/root/.cache/uv \

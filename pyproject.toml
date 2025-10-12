@@ -11,7 +11,6 @@ dependencies = [
     "azure-identity>=1.23.1",
     "dotenv>=0.9.9",
     "fastmcp>=2.10.5",
-    "gradio>=5.37.0",
     "loguru>=0.7.3",
     "mcp-server-fetch>=2025.1.17",
     "notebook>=7.4.5",
@@ -65,6 +64,7 @@ exclude = [".venv"]
 
 [dependency-groups]
 dev = [
+    "gradio>=5.49.1",
     "ipykernel>=6.29.5",
     "pre-commit>=4.2.0",
     "pyright>=1.1.406",
