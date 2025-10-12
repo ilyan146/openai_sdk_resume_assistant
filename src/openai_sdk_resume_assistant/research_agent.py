@@ -1,8 +1,8 @@
 import os
 
-from openai_sdk_resume_assistant.base_agent import AIAgent
 from openai_sdk_resume_assistant.client import AzureAIClient
 from openai_sdk_resume_assistant.mcp_params import playwright_params
+from src.openai_sdk_resume_assistant.base_agent import AIAgent
 
 RESEARCH_AGENT_INSTRUCTIONS = """
 You are a research agent that can use tools for browsing the internet and

@@ -27,11 +27,11 @@ WORKDIR /app
 # RUN chown -R appuser:appuser /app
 
 # Copy dependency files
-COPY pyproject.toml uv.lock* README.md .env* ./
+COPY pyproject.toml uv.lock* .env* ./
 
 # Install dependencies using uv
 RUN --mount=type=cache,target=/root/.cache/uv \
-    uv sync --frozen 
+    uv sync --frozen --no-dev
 
 # Copy the source code into the container.
 COPY ./src ./src
@@ -43,7 +43,7 @@ COPY ./src ./src
 ENV PYTHONPATH=/app/src
 
 # Run the application as a module
-CMD ["uv", "run", "src/openai_sdk_resume_assistant/resume_agent.py"]
+CMD ["uv", "run", "-m","src.openai_sdk_resume_assistant.resume_agent"]
 
 # # Expose the port that the application listens on.
 # EXPOSE 8000

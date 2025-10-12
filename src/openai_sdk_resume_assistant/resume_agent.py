@@ -1,6 +1,6 @@
-from openai_sdk_resume_assistant.base_agent import AIAgent
-from openai_sdk_resume_assistant.client import AzureAIClient
-from openai_sdk_resume_assistant.mcp_params import playwright_params
+from .base_agent import AIAgent
+from .client import AzureAIClient
+from .mcp_params import playwright_params
 
 name = "Mohamed Ilyan"
 
