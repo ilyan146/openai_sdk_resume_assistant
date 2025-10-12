@@ -2,32 +2,34 @@ import os
 
 from openai_sdk_resume_assistant.base_agent import AIAgent
 from openai_sdk_resume_assistant.client import AzureAIClient
+from openai_sdk_resume_assistant.mcp_params import playwright_params
 
 RESEARCH_AGENT_INSTRUCTIONS = """
-You are a research agent that can use tools for browsing the internet and 
-you also have access to my file system. 
-You are highly capable to accomplish your tasks independently. 
-This includes accepting all cookies and clicking 'not now' as appropriate to get the content you need. 
-If one website isn't fruitful, try another. 
-Be persistent until you are able to solve your assignment, 
+You are a research agent that can use tools for browsing the internet and
+you also have access to my file system.
+You are highly capable to accomplish your tasks independently.
+This includes accepting all cookies and clicking 'not now' as appropriate to get the content you need.
+If one website isn't fruitful, try another.
+Be persistent until you are able to solve your assignment,
 trying different options and sites are needed.
 If the amount of information in one site is too large, please summarize it before using it.
 """
 
 
-# List of params
-playwright_params = {"command": "npx", "args": ["@playwright/mcp@latest"]}
+# # List of params
+# playwright_params = {"command": "npx", "args": ["@playwright/mcp@latest"]}
 
 file_storage_path = os.path.abspath(os.path.join(os.getcwd(), "file_storage"))
 files_params = {"command": "npx", "args": ["-y", "@modelcontextprotocol/server-filesystem", file_storage_path]}
 
-# send_email_params = {"command": "uv", "args": ["run", "agent_tools.py"]}
+# # send_email_params = {"command": "uv", "args": ["run", "agent_tools.py"]}
 
-memory_params = {"command": "npx", "args": ["-y", "mcp-memory-libsql"], "env": {"LIBSQL_URL": "file:./memory/ed.db"}}
+# memory_params = {"command": "npx", "args": ["-y", "mcp-memory-libsql"], "env": {"LIBSQL_URL": "file:./memory/ed.db"}}
 
 
 # Create mcp servers with the params
-params_list = [playwright_params, files_params, memory_params]
+# params_list = [playwright_params, files_params, memory_params]
+params_list = [playwright_params]
 
 
 research_agent = AIAgent(

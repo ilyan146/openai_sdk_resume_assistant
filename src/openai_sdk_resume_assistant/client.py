@@ -9,8 +9,8 @@ from openai import AsyncAzureOpenAI, AzureOpenAI
 load_dotenv(override=True)
 
 """
-If using Azure DefaultAzureCredential, 
-Set up Azure CLI (add to system path) 
+If using Azure DefaultAzureCredential,
+Set up Azure CLI (add to system path)
 -> az login to set up a onetime authentication
 """
 

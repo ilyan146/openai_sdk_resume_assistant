@@ -1,5 +1,5 @@
 from contextlib import AsyncExitStack, asynccontextmanager
-from typing import Any, Dict, List
+from typing import Any
 
 from agents import Agent, Runner
 from agents.mcp import MCPServerStdio
@@ -28,7 +28,7 @@ class AIAgent:
     """
 
     def __init__(
-        self, name: str, instructions: str, model: str, mcp_params: List[Dict[str, Any]] | Dict[str, Any], **agent_kwargs
+        self, name: str, instructions: str, model: str, mcp_params: list[dict[str, Any]] | dict[str, Any], **agent_kwargs
     ):
         self.name = name
         self.instructions = instructions
@@ -38,7 +38,7 @@ class AIAgent:
 
     # Internal converter for the params
     @staticmethod
-    def _create_mcp_params_list(mcp_params) -> List[Dict[str, Any]]:
+    def _create_mcp_params_list(mcp_params) -> list[dict[str, Any]]:
         if isinstance(mcp_params, dict):
             return [mcp_params]
         elif isinstance(mcp_params, list):
@@ -55,7 +55,7 @@ class AIAgent:
             ]
             yield tool_mcp_servers
 
-    async def _create_agent(self, mcp_servers_list: List[MCPServerStdio] | None) -> Agent:
+    async def _create_agent(self, mcp_servers_list: list[MCPServerStdio] | None) -> Agent:
         """
         Create an Agent instance with the provided MCP servers and any other kwargs.
         """

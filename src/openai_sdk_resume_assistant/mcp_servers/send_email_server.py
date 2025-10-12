@@ -1,5 +1,4 @@
 import os
-from typing import Dict
 
 import sendgrid  # type: ignore
 from dotenv import load_dotenv
@@ -14,7 +13,7 @@ mcp = FastMCP(name="tools_server")
 
 
 @mcp.tool(name="send_email_tool")
-def send_email(subject: str, body: str) -> Dict[str, str]:
+def send_email(subject: str, body: str) -> dict[str, str]:
     sg = sendgrid.SendGridAPIClient(api_key=os.getenv("SENDGRID_API_KEY"))
     from_email = Email("mohamed.ilyan@boskalis.com")
     to_email = To("ilyan146@gmail.com")

@@ -1,5 +1,3 @@
-from typing import List, Tuple
-
 import numpy as np
 from openai import AzureOpenAI
 
@@ -36,7 +34,7 @@ class RAGTool:
         emb = np.array(response.data[0].embedding).astype("float32")
         return emb
 
-    def _find_similar(self, text_input: str, top_k: int = 5) -> Tuple[List[str], List[str]]:
+    def _find_similar(self, text_input: str, top_k: int = 5) -> tuple[list[str], list[str]]:
         """Find similar documents in the collection given a text input
         :param text_input: the text we want to search the document for
         :param top_k: the number of results to return that are similar
