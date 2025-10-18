@@ -73,5 +73,5 @@ if __name__ == "__main__":
     check_input = "Hey what is my name and what are the news that you searched for before ?"
 
     # result = asyncio.run(main(news_input))
-    result = asyncio.run(main(check_input))
+    result = asyncio.run(main(user))
     print("Response from Research Agent:", result)
