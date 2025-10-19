@@ -2,6 +2,8 @@ from pathlib import Path
 
 import chromadb
 import numpy as np
+from langchain_community.document_loaders.generic import GenericLoader
+from langchain_text_splitters import RecursiveCharacterTextSplitter
 from loguru import logger
 from openai import AzureOpenAI
 from PyPDF2 import PdfReader
@@ -65,14 +67,12 @@ class VectorDB:
 
         # Exit out if the collection_name already exists
         if collection_name in self.collection_list:
-            logger.warning(f"Collection {collection_name} already exists. Please choose a different name.")
-            return
+            logger.warning(f"Collection {collection_name} already exists. The new docs will be added to the existing collection.")
 
         collection = self.get_or_create_collection(collection_name=collection_name)
 
         if isinstance(directory, str):
             directory = Path(directory)
-
         logger.debug(f"Processing pdfs from directory: {directory} to collection: {collection.name} ......")
 
         for pdf_file in directory.glob("*.pdf"):
@@ -96,12 +96,51 @@ class VectorDB:
                     ids.append(unique_id)
                     documents.append(text)
                     embeddings.append(self._get_embeddings(text).tolist())
-                    metadata.append({"page": index, "content": text, "file_name": pdf_file.name})
+                    metadata.append({"page": index, "source": pdf_file, "file_name": pdf_file.name})
 
             # Add the pdf data to the collection with embeddings
-            collection = self.get_or_create_collection(collection_name=collection_name)
+            # collection = self.get_or_create_collection(collection_name=collection_name)
             collection.add(ids=ids, documents=documents, embeddings=embeddings, metadatas=metadata)
             logger.success(f"PDF documents added to the collection: {collection_name} successfully")
+
+    # TODO: Create langchain based text parser from dir
+    def add_texts_to_collection(self, directory: Path | str, collection_name: str) -> None:
+        """Add text documents from a directory to a collection of vector database as vectors of pages"""
+        if isinstance(directory, str):
+            directory = Path(directory)
+        loader = GenericLoader.from_filesystem(str(directory), glob="**/*.txt")
+        documents = loader.load()
+
+        # Instantiate text splitter
+        text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=100, separators=["\n\n", "\n", " ", ""])
+        # Create text chunks
+        chunks = text_splitter.split_documents(documents)
+        # Loop over the chunks add creat a list of ids, documents, embedding
+        ids = []
+        metadata = []
+        embeddings = []
+        documents = []
+        collection = self.get_or_create_collection(collection_name=collection_name)
+        logger.debug(f"Processing texts from directory: {directory} to collection: {collection_name} ......")
+        for index, chunk in tqdm(
+            enumerate(chunks),
+            total=len(chunks),
+            desc=f"Processing text files from dir : {str(directory)}",
+        ):
+            unique_id = f"{str(directory.stem).replace(' ', '_').lower()}_chunk_{index}"
+            ids.append(unique_id)
+            documents.append(chunk.page_content)
+            embeddings.append(self._get_embeddings(chunk.page_content).tolist())
+            metadata.append(
+                {
+                    "page": index,
+                    "source": chunk.metadata.get("source", ""),
+                    "file_name": Path(chunk.metadata.get("source", "")).stem,
+                }
+            )
+
+        collection.add(ids=ids, documents=documents, embeddings=embeddings, metadatas=metadata)
+        logger.success(f"Text documents added to the collection: {collection_name} successfully")
 
     # Removing collection from the vector database
     def delete_collection(self, collection_name: str) -> None:
@@ -115,13 +154,24 @@ class VectorDB:
 
 if __name__ == "__main__":
     # Example creating a vector database and adding PDF documents to it
-    COLLECTION_NAME = "ilyan_resume"
-    base_dir = Path(__file__).parent.parent
-    pdf_docs_dir = base_dir / "data"
-    print(f"PDF documents directory: {pdf_docs_dir}")
+    # COLLECTION_NAME = "ilyan_resume"
+    # base_dir = Path(__file__).parent.parent
+    # pdf_docs_dir = base_dir / "data"
+    # print(f"PDF documents directory: {pdf_docs_dir}")
+    #
+    # vector_db = VectorDB("resume_vectorstore")  # Using default vector database
+    # vector_db.add_pdf_to_collection(directory=pdf_docs_dir, collection_name=COLLECTION_NAME)
+    # # Retrieve collection with same name
+    # collection = vector_db.get_or_create_collection(collection_name=COLLECTION_NAME)
+    # print(f"Retrieved collection: {collection.name}")
 
-    vector_db = VectorDB("resume_vectorstore")  # Using default vector database
-    vector_db.add_pdf_to_collection(directory=pdf_docs_dir, collection_name=COLLECTION_NAME)
+    # Adding text document as well to an example collection
+    text_docs_dir = Path(__file__).parent.parent / "data"
+    print(f"Text documents directory: {text_docs_dir}")
+
+    vector_db_sample = VectorDB("sample_vectorstore")
+    vector_db_sample.add_texts_to_collection(directory=text_docs_dir, collection_name="sample_texts")
+
     # Retrieve collection with same name
-    collection = vector_db.get_or_create_collection(collection_name=COLLECTION_NAME)
+    collection = vector_db_sample.get_or_create_collection(collection_name="sample_texts")
     print(f"Retrieved collection: {collection.name}")

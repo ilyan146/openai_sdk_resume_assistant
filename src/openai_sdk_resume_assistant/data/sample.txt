@@ -1,0 +1,16 @@
+Hey My name is Jacob and I am 79 years old.
+I like to read books and work on software projects.
+
+My favorite sport is Baseketball.
+
+## My experience
+I have worked as a software engineer for the past 40 years.
+
+
+## My stack
+- JavaScript
+- Python
+- Databricks
+- SQL
+- NoSQL
+- Snoflake

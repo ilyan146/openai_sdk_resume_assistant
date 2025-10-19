@@ -85,14 +85,14 @@ Answer using only retrieved factual context; do not invent details.
 
 
 # Create the rag agent
-async def create_rag_agent(collection_name: str):  # -> AIAgent:
+async def create_rag_agent(collection_name: str, db_name: str = "resume_vectorstore"):  # -> AIAgent:
     client = AzureAIClient()
     _openai_client = client.set_openai_client_defaults()
 
     rag_tool = RAGTool(
         collection_name=collection_name,
         azure_ai_client=client,
-        db_name="resume_vectorstore",
+        db_name=db_name,
     )
 
     @function_tool
@@ -114,16 +114,16 @@ async def create_rag_agent(collection_name: str):  # -> AIAgent:
 if __name__ == "__main__":
     import asyncio
 
-    COLLECTION_NAME = "ilyan_resume"
+    # COLLECTION_NAME = "ilyan_resume"
+    COLLECTION_NAME = "sample_texts"
 
-    rag_agent_instance = asyncio.run(create_rag_agent(collection_name="ilyan_resume"))
+    rag_agent_instance = asyncio.run(create_rag_agent(collection_name=COLLECTION_NAME, db_name="sample_vectorstore"))
 
     async def main(user_input: str):
         """
         Run the RAG agent with the provided user input.
         """
         response = await rag_agent_instance.run_agent_with_mcp(user_input)
-        # response = await Runner.run(rag_agent_instance, input=user_input)
         return response
 
     while True:
