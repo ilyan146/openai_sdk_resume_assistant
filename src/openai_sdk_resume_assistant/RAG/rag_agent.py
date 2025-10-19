@@ -12,8 +12,8 @@ from src.openai_sdk_resume_assistant.client import AzureAIClient
 This file will be used to serve a RAG agent as a tool for the resume agent.
 
 TODO:
-- RAG tool --> Use embedding models to create vectorstore and use it to retrieve relevant information
-- RAG Agent with tool integration
+- RAG tool --> Use embedding models to create vectorstore and use it to retrieve relevant information [DONE]
+- RAG Agent with tool integration [DONE]
 - RAG Agent is provided to other agents through MCP servers
 """
 
@@ -114,10 +114,10 @@ async def create_rag_agent(collection_name: str, db_name: str = "resume_vectorst
 if __name__ == "__main__":
     import asyncio
 
-    # COLLECTION_NAME = "ilyan_resume"
-    COLLECTION_NAME = "sample_texts"
+    COLLECTION_NAME = "ilyan_resume"
+    # COLLECTION_NAME = "sample_texts"
 
-    rag_agent_instance = asyncio.run(create_rag_agent(collection_name=COLLECTION_NAME, db_name="sample_vectorstore"))
+    rag_agent_instance = asyncio.run(create_rag_agent(collection_name=COLLECTION_NAME))
 
     async def main(user_input: str):
         """

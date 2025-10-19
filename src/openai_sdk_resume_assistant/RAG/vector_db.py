@@ -103,7 +103,7 @@ class VectorDB:
             collection.add(ids=ids, documents=documents, embeddings=embeddings, metadatas=metadata)
             logger.success(f"PDF documents added to the collection: {collection_name} successfully")
 
-    # TODO: Create langchain based text parser from dir
+    # TODO: Create langchain based text parser from dir and add to collection [DONE]
     def add_texts_to_collection(self, directory: Path | str, collection_name: str) -> None:
         """Add text documents from a directory to a collection of vector database as vectors of pages"""
         if isinstance(directory, str):
@@ -169,9 +169,9 @@ if __name__ == "__main__":
     text_docs_dir = Path(__file__).parent.parent / "data"
     print(f"Text documents directory: {text_docs_dir}")
 
-    vector_db_sample = VectorDB("sample_vectorstore")
-    vector_db_sample.add_texts_to_collection(directory=text_docs_dir, collection_name="sample_texts")
+    vector_db_sample = VectorDB("resume_vectorstore")
+    vector_db_sample.add_texts_to_collection(directory=text_docs_dir, collection_name="ilyan_resume")
 
     # Retrieve collection with same name
-    collection = vector_db_sample.get_or_create_collection(collection_name="sample_texts")
+    collection = vector_db_sample.get_or_create_collection(collection_name="ilyan_resume")
     print(f"Retrieved collection: {collection.name}")

@@ -1,0 +1,36 @@
+Ilyan — Professional & Personal Summary
+
+Name: Ilyan
+
+Core Interests:
+- AI engineering and prototyping
+- Research-driven physical training for strength and longevity
+- Reading philosophy and critical thinking
+- Listening to technical and data-science podcasts
+
+Hobbies & Activities:
+- Podcasts:
+  - The Pragmatic Engineer
+  - SuperDataScience
+  - Additional technical and long-form interview shows
+- Reading:
+  - Philosophy (classical and modern thinkers)
+  - Literature (classical novels and deep-dive nonfiction)
+- Fitness & Wellness:
+  - Regular, research-based exercise programs focused on mental and physical resilience
+  - Emphasis on longevity, functional strength, and recovery practices
+
+AI Work & Approach:
+- Enjoy building AI projects end-to-end, from quick proofs-of-concept (POC) to production-grade prototypes.
+- Use agentic frameworks to rapidly POC and demo ideas.
+- When appropriate, iterate into tailored, production-ready personal AI solutions that align with company scope and requirements.
+- Focus areas: rapid experimentation, modular design, and feature refinement for real-world use.
+
+Working Style:
+- Structured, evidence-driven, and practical.
+- Prioritize clear demos and fast validation cycles before deep implementation.
+- Balance creative exploration with disciplined engineering and measurable outcomes.
+
+Contact / Notes:
+- Open to collaboration on AI research, prototyping, and fitness/health technology projects.
+- Prefers concise requirements and iterative feedback loops for fast, practical results.
