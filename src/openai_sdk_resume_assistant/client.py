@@ -22,17 +22,26 @@ class AzureAIClient(AzureOpenAI):
 
     def __init__(self, azure_endpoint=None, api_version=None, credential=None):
         self.api_version = api_version or self.API_VERSION
-        self.credential = credential or InteractiveBrowserCredential()
-        self.token_provider = self._get_token_provider
-
         self.azure_endpoint = azure_endpoint or os.getenv("AZURE_OPENAI_ENDPOINT")
         if not self.azure_endpoint:
             raise ValueError("Azure OpenAI endpoint is not set. Please set the AZURE_OPENAI_ENDPOINT environment variable.")
-        super().__init__(
-            azure_endpoint=self.azure_endpoint,
-            azure_ad_token_provider=self.token_provider,
-            api_version=self.api_version,
-        )
+
+        self.api_key = os.getenv("AZURE_OPENAI_API_KEY")
+        if not self.api_key:
+            self.credential = credential or InteractiveBrowserCredential()
+            self.token_provider = self._get_token_provider
+
+            super().__init__(
+                azure_endpoint=self.azure_endpoint,
+                azure_ad_token_provider=self.token_provider,
+                api_version=self.api_version,
+            )
+        else:
+            super().__init__(
+                azure_endpoint=self.azure_endpoint,
+                api_key=self.api_key,
+                api_version=self.api_version,
+            )
 
     @property
     def _get_token_provider(self):
@@ -50,9 +59,14 @@ class AzureAIClient(AzureOpenAI):
         # make available the LLM
         load_dotenv(override=True)
 
-        openai_client = AsyncAzureOpenAI(
-            azure_endpoint=self.azure_endpoint, api_version=self.api_version, azure_ad_token_provider=self.token_provider
-        )
+        if self.api_key:
+            openai_client = AsyncAzureOpenAI(
+                azure_endpoint=self.azure_endpoint, api_version=self.api_version, api_key=self.api_key
+            )
+        else:
+            openai_client = AsyncAzureOpenAI(
+                azure_endpoint=self.azure_endpoint, api_version=self.api_version, azure_ad_token_provider=self.token_provider
+            )
         # Set default client and configs
         set_default_openai_client(openai_client)
         set_default_openai_api("chat_completions")

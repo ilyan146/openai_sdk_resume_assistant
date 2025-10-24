@@ -4,9 +4,9 @@ from loguru import logger
 from openai import AzureOpenAI
 
 from openai_sdk_resume_assistant.base_agent import AIAgent
+from openai_sdk_resume_assistant.client import AzureAIClient
 from openai_sdk_resume_assistant.mcp_params import playwright_params
 from openai_sdk_resume_assistant.RAG.vector_db import VectorDB
-from src.openai_sdk_resume_assistant.client import AzureAIClient
 
 """
 This file will be used to serve a RAG agent as a tool for the resume agent.
