@@ -49,12 +49,12 @@
 
 
 # Example docker compose file
-# version: '3.8'
+version: '3.8'
 
 services:
   chatbot:
     build: .
-    image: openai_chatbot
+    image: resume_chatbot_image
     container_name: resume_agent
     stdin_open: true
     tty: true
@@ -62,3 +62,20 @@ services:
       - ./.env:/app/.env:ro
     environment:
       - PYTHONPATH=/app/src
+    # depends_on:
+    #   - database
+
+#   database:
+#     image: 'postgres:latest'
+#     container_name: resume_postgres
+#     ports:
+#       - '5432:5432'
+#     environment:
+#       POSTGRES_USER: postgres
+#       POSTGRES_PASSWORD: 1234
+#       POSTGRES_DB: postgres
+#     volumes:
+#       - postgres_data:/var/lib/postgresql/data
+
+# volumes:
+#   postgres_data:

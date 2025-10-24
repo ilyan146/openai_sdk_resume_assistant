@@ -58,10 +58,10 @@ class RAGTool:
             query_embeddings=self._get_embeddings(text_input=text_input).tolist(),
             n_results=top_k,
         )
-        logger.debug(f"Retrieved {len(results['documents'][0])} similar documents from the collection.")
-        documents = results["documents"][0][:]
-        pages = [page["page"] for page in results["metadatas"][0][:]]
-        return documents, pages
+        logger.debug(f"Retrieved {len(results['documents'][0])} similar documents from the collection.")  # type: ignore
+        documents = results["documents"][0][:]  # type: ignore
+        pages = [page["page"] for page in results["metadatas"][0][:]]  # type: ignore
+        return documents, pages  # type: ignore
 
     # @function_tool
     def create_rag_context(self, text_input: str) -> str:

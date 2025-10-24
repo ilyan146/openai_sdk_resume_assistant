@@ -47,8 +47,8 @@ class AzureAIClient(AzureOpenAI):
     def _get_token_provider(self):
         try:
             # Test token retrieval
-            self.credential.get_token("https://cognitiveservices.azure.com/.default")
-            token_provider = get_bearer_token_provider(self.credential, "https://cognitiveservices.azure.com/.default")
+            self.credential.get_token("https://cognitiveservices.azure.com/.default")  # type: ignore
+            token_provider = get_bearer_token_provider(self.credential, "https://cognitiveservices.azure.com/.default")  # type: ignore
             logger.success("Successfully initialized Azure Credentials!!")
             return token_provider
         except Exception as e:

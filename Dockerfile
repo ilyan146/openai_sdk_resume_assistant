@@ -28,6 +28,13 @@ WORKDIR /app
 # # Change ownership of the app directory to appuser
 # RUN chown -R appuser:appuser /app
 
+# Install Node.js and npm for MCP servers
+RUN apt-get update && apt-get install -y \
+    curl \
+    && curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+    && apt-get install -y nodejs \
+    && rm -rf /var/lib/apt/lists/*
+
 # Copy dependency files
 COPY pyproject.toml uv.lock* .env* ./
 # COPY pyproject.toml .env* ./
@@ -46,7 +53,7 @@ COPY ./src ./src
 ENV PYTHONPATH=/app/src
 
 # Run the application as a module
-CMD ["uv", "run", "-m","src.openai_sdk_resume_assistant.resume_agent"]
+CMD ["uv", "run", "src/openai_sdk_resume_assistant/RAG/rag_agent.py"]
 
 # # Expose the port that the application listens on.
 # EXPOSE 8000
