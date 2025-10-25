@@ -1,3 +1,5 @@
+from openai_sdk_resume_assistant.definitions import PACKAGE_DIR
+
 # List of params
 playwright_params = {"command": "npx", "args": ["@playwright/mcp@latest"]}
 
@@ -7,3 +9,10 @@ playwright_params = {"command": "npx", "args": ["@playwright/mcp@latest"]}
 # send_email_params = {"command": "uv", "args": ["run", "agent_tools.py"]}
 
 memory_params = {"command": "npx", "args": ["-y", "mcp-memory-libsql"], "env": {"LIBSQL_URL": "file:./memory/ed.db"}}
+
+
+rag_server_path = PACKAGE_DIR / "mcp_servers" / "rag_agent_server.py"
+rag_agent_params = {
+    "command": "uv",
+    "args": ["run", str(rag_server_path)],
+}

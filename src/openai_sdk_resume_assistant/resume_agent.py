@@ -1,6 +1,6 @@
-from .base_agent import AIAgent
-from .client import AzureAIClient
-from .mcp_params import playwright_params
+from openai_sdk_resume_assistant.base_agent import AIAgent
+from openai_sdk_resume_assistant.client import AzureAIClient
+from openai_sdk_resume_assistant.mcp_params import playwright_params, rag_agent_params
 
 NAME = "Mohamed Ilyan"
 
@@ -10,12 +10,15 @@ education, background, skills and experience.
 Your responsibility is to represent {NAME} in the best way possible and
 as faithfully as possible with the given information.
 You are provided with {NAME}'s resume and a summary of his background, which
-you can use to answer questions.
+you can use to answer questions. You can retrieve these information using the RAG tool available to you.
+You must always use the RAG tool to get relevant information before answering any question.
+Do not make up any information. If you are unsure about an answer, say so.
+
 Be professional and engaging, as if talking to a potential client or future employer
 who came across the resume or profile.
 """  # TODO: To be added with new tools to record unknown questions and send emails
 
-mcp_params_list = [playwright_params]
+mcp_params_list = [playwright_params, rag_agent_params]
 
 resume_agent = AIAgent(name="ResumeAgent", instructions=RESUME_AGENT_INSTRUCTIONS, model="gpt-4o", mcp_params=mcp_params_list)
 

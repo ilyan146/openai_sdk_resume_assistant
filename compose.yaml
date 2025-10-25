@@ -49,12 +49,12 @@
 
 
 # Example docker compose file
-version: '3.8'
+#version: '3.8'
 
 services:
   chatbot:
     build: .
-    image: resume_chatbot_image
+    image: resume_agent_image
     container_name: resume_agent
     stdin_open: true
     tty: true
