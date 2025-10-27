@@ -1,0 +1,13 @@
+services:
+  resume_backend:
+    build:
+      context: ../
+      dockerfile: ./docker/Dockerfile
+    image: resume_backend
+    container_name: resume_backend
+    volumes:
+      - ./.env:/app/.env:ro
+    environment:
+      - PYTHONPATH=/app/src
+    ports:
+        - "8000:8000"

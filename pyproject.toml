@@ -66,6 +66,9 @@ typeCheckingMode = "strict"
 pythonVersion = "3.12"
 exclude = [".venv"]
 
+[tool.uv.workspace]
+members = ["backend"]
+
 [dependency-groups]
 dev = [
     "gradio>=5.49.1",
