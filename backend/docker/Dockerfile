@@ -18,13 +18,12 @@ RUN npm install -g @playwright/mcp@latest
 
 # Copy dependency files
 COPY pyproject.toml uv.lock* .env* ./
+# Copy the source code into the container.
+COPY ./backend/app ./app
 
 # Install dependencies using uv
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --frozen --no-dev
-
-# Copy the source code into the container.
-COPY ./src ./src
 
 # Set Python path to include .src directory
 ENV PYTHONPATH=/app/src
