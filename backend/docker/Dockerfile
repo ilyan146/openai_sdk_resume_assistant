@@ -18,15 +18,18 @@ RUN npm install -g @playwright/mcp@latest
 
 # Copy dependency files
 COPY pyproject.toml uv.lock* .env* ./
-# Copy the source code into the container.
-COPY ./backend/app ./app
+
+COPY src/ ./src
 
 # Install dependencies using uv
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --frozen --no-dev
 
+# Copy the source code into the container.
+COPY ./backend/app ./app
+
 # Set Python path to include .src directory
-ENV PYTHONPATH=/app/src
+#ENV PYTHONPATH=/app/src
 
 # Expose the FastAPI port
 EXPOSE 8000

@@ -1,10 +1,10 @@
 services:
-  fastapi:
+  resume_rag:
     build:
       context: .
       dockerfile: backend/docker/Dockerfile
-    image: fastapi_backend
-    container_name: fastapi_dev
+    image: resume_fastapi
+    container_name: resume_backend
     volumes:
       - ./.env:/app/.env:ro
     environment:
