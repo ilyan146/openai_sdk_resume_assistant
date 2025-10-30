@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 
-from app.models.chat_schemas import QuestionRequest
-from app.services.chat_service import ChatService
+from openai_sdk_resume_assistant.backend.app.models.chat_schemas import QuestionRequest
+from openai_sdk_resume_assistant.backend.app.services.chat_service import ChatService
 
 router = APIRouter(prefix="/chat", tags=["chat"])
 

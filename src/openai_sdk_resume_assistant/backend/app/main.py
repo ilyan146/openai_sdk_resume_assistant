@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api.endpoints.chat import router
+from openai_sdk_resume_assistant.backend.app.api.endpoints.chat import router
 
 APP_TITLE = "CV API"
 APP_VERSION = "1.0.0"
@@ -28,4 +28,4 @@ def health():
 if __name__ == "__main__":
     import uvicorn
 
-    uvicorn.run("app.main:app", host="127.0.0.1", port=8000)
+    uvicorn.run("openai_sdk_resume_assistant.app.main:app", host="127.0.0.1", port=8000)

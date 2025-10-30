@@ -53,7 +53,9 @@
 
 services:
   chatbot:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile.test
     image: resume_agent_image
     container_name: resume_agent
     stdin_open: true
