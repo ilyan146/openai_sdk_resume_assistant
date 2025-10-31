@@ -22,9 +22,9 @@ WORKDIR /app
 #     appuser
 # # Change ownership of the app directory to appuser
 # RUN chown -R appuser:appuser /app
-
 # Switch to the non-privileged user to run the application.
 # USER appuser
+
 
 # Install Node.js and npm for MCP servers
 RUN apt-get update && apt-get install -y \
@@ -38,7 +38,6 @@ RUN npm install -g @playwright/mcp@latest
 # Copy dependency files
 COPY pyproject.toml uv.lock* .env* ./
 
-
 # Install dependencies using uv
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --frozen --no-dev
@@ -51,9 +50,3 @@ ENV PYTHONPATH=/app/src
 
 # Run the application as a module
 CMD ["uv", "run", "src/openai_sdk_resume_assistant/resume_agent.py"]
-
-# # Expose the port that the application listens on.
-# EXPOSE 8000
-
-# # Run the application.
-# CMD gunicorn '.venv.Lib.site-packages.fastapi.middleware.wsgi' --bind=0.0.0.0:8000
