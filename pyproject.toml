@@ -2,42 +2,77 @@
 name = "openai-sdk-resume-assistant"
 version = "0.1.0"
 description = "Add your description here"
-readme = "README.md"
+# readme = "README.md"
 authors = [
     { name = "Nazer, Mohamed Ilyan", email = "mohamed.ilyan+Boskalis@boskalis.com" }
 ]
 requires-python = ">=3.12"
 dependencies = [
     "azure-identity>=1.23.1",
+    "chromadb>=1.2.0",
     "dotenv>=0.9.9",
     "fastmcp>=2.10.5",
-    "gradio>=5.37.0",
+    "langchain>=1.0.0",
+    "langchain-community>=0.4",
+    "langchain-text-splitters>=1.0.0",
     "loguru>=0.7.3",
+    "mcp-server-fetch>=2025.1.17",
+    "notebook>=7.4.5",
     "openai>=1.96.1",
     "openai-agents>=0.2.0",
     "pydantic>=2.11.7",
     "pypdf2>=3.0.1",
+    "ruff>=0.14.0",
+    "sendgrid>=6.12.4",
 ]
 
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
+[tool.hatch.build.targets.wheel]
+packages = ["src/openai_sdk_resume_assistant"]
+
 [tool.ruff]
 target-version = "py312"
 line-length = 130
+extend-exclude=["*.ipynb"]
 
 [tool.ruff.lint]
-select = ["E", "F", "B", "I"]
-ignore = []
+select = [
+    "E",  # pycodestyle errors
+    "W",  # pycodestyle warnings
+    "F",  # pyflakes
+    "I",  # isort
+    "B",  # flake8-bugbear
+    "C4",  # flake8-comprehensions
+    "UP",  # pyupgrade
+    "ARG001", # unused arguments in functions
+]
+ignore = [
+    "E501",  # line too long, handled by black
+    "B008",  # do not perform function calls in argument defaults
+    "W191",  # indentation contains tabs
+    "B904",  # Allow raising exceptions without from e, for HTTPException
+]
 
 [tool.ruff.format]
 quote-style = "double"
 indent-style = "space"
 line-ending = "auto"
 
+[tool.pyright]
+typeCheckingMode = "strict"
+pythonVersion = "3.12"
+exclude = [".venv"]
+
+[tool.uv.workspace]
+members = ["backend"]
+
 [dependency-groups]
 dev = [
+    "gradio>=5.49.1",
     "ipykernel>=6.29.5",
     "pre-commit>=4.2.0",
+    "pyright>=1.1.406",
 ]

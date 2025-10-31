@@ -1,0 +1,13 @@
+services:
+  resume_rag:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: resume_fastapi
+    container_name: resume_backend
+    volumes:
+      - ./.env:/app/.env:ro
+    environment:
+      - PYTHONPATH=/app/src
+    ports:
+        - "8000:8000"
