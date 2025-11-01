@@ -35,17 +35,12 @@ import viteLogo from '/vite.svg'
 // export default App
 
 // Starting edits from here
-import {Routes, Route} from "react-router-dom";
-import {Layout} from "./layout/Layout.jsx";
-import "./App.css";
+import React from 'react';
+import ChatWindow from './components/ChatWindow';
 
-function App() {
-  return (
-    <Routes>
-      <Route path="/" element={<Layout />} />
-    </Routes>
-  );
-}
+const App = () => {
+  return <ChatWindow />;
+};
 
 export default App;
 
