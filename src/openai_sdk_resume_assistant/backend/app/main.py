@@ -9,7 +9,7 @@ app = FastAPI(title=APP_TITLE, version=APP_VERSION)
 
 app.include_router(router, prefix="/api/v1")
 
-ALLOWED_ORIGINS = ["http://localhost", "http://localhost:3000"]
+ALLOWED_ORIGINS = ["http://localhost", "http://localhost:3000", "http://localhost:5173"]  # Vite dev server
 app.add_middleware(
     CORSMiddleware,
     allow_origins=ALLOWED_ORIGINS,
