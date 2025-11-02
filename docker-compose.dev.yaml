@@ -1,5 +1,5 @@
 services:
-  resume_rag:
+  fastapi_backend:
     build:
       context: .
       dockerfile: Dockerfile
@@ -11,3 +11,14 @@ services:
       - PYTHONPATH=/app/src
     ports:
         - "8000:8000"
+  
+  react_frontend:
+    build:
+      context: ./src/openai_sdk_resume_assistant/react-frontend
+      dockerfile: Dockerfile
+    image: resume_react_frontend
+    container_name: resume_frontend
+    ports:
+      - "5173:5173"
+    depends_on:
+      - fastapi_backend
