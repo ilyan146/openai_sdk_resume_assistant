@@ -16,7 +16,7 @@ services:
     build:
       context: ./src/openai_sdk_resume_assistant/react-frontend
       dockerfile: Dockerfile
-    image: resume_react_frontend
+    image: resume_new_frontend
     container_name: resume_frontend
     ports:
       - "5173:5173"
