@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const ChatInput = ({ onSend, disabled }) => {
+const ChatInput = ({ onSend, onClear, disabled }) => {
   const [value, setValue] = useState('');
 
   const handleSend = () => {
@@ -19,6 +19,13 @@ const ChatInput = ({ onSend, disabled }) => {
 
   return (
     <div className="chat-input-row">
+      <button
+        className="chat-clear-button"
+        onClick={onClear}
+        disabled={disabled}
+      >
+        Clear
+      </button>
       <textarea
         className="chat-textarea"
         placeholder="Type your question..."
@@ -32,7 +39,7 @@ const ChatInput = ({ onSend, disabled }) => {
         onClick={handleSend}
         disabled={disabled || !value.trim()}
       >
-        Send
+        submit
       </button>
     </div>
   );

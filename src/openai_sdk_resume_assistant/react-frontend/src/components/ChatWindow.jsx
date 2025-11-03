@@ -56,16 +56,16 @@ import { useChat } from '../hooks/useChat';
 import ChatMessages from './ChatMessages';
 import ChatInput from './ChatInput';
 import StatusMessage from './StatusMessage';
-import '../styles/chat.css';
+import '../styles/ChatPage.css';
 
 const ChatWindow = () => {
-  const { messages, loading, error, sendChat } = useChat();
+  const { messages, loading, error, sendChat, clearChat} = useChat();
 
   return (
     <div className="chat-container">
       <ChatMessages messages={messages} loading={loading} />
       <StatusMessage loading={loading} error={error} />
-      <ChatInput onSend={sendChat} disabled={loading} />
+      <ChatInput onSend={sendChat} onClear={clearChat} disabled={loading} />
     </div>
   );
 };

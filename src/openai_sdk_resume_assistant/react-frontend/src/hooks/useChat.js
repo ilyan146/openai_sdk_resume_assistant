@@ -39,34 +39,42 @@ import { useState, useEffect } from 'react';
 import { sendMessage as apiSendMessage } from '../services/api';
 
 export const useChat = () => {
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState([]); // Initial value is an empty array
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // optional: restore history
+  // optional: to restore history
   useEffect(() => {
-    const saved = localStorage.getItem('chatLog');
-    if (saved) setMessages(JSON.parse(saved));
-  }, []);
+    const saved = localStorage.getItem('chatLog'); // If there is a saved chat log in localStorage
+    if (saved) setMessages(JSON.parse(saved)); // Using setMessages function you can update the state with the new value
+  }, []); // Empty dependency array means this effect runs once on mount only
 
+  // For storing a chatlog in memory for persistence of history for example
   const persist = (next) => {
-    localStorage.setItem('chatLog', JSON.stringify(next));
+    localStorage.setItem('chatLog', JSON.stringify(next)); // localStorage only stores strings, so we convert the array to a JSON string
   };
+
+  const clearChat = () => {
+    setMessages([]);
+    localStorage.removeItem('chatLog');
+    };
 
   const sendChat = async (text) => {
     const trimmed = text.trim();
     if (!trimmed) return;
     setMessages(prev => {
-      const next = [...prev, { text: trimmed, isUser: true }];
+      const next = [...prev, { text: trimmed, isUser: true }]; // Updating the conversation list of dictionaries the content and user the user
       persist(next);
       return next;
     });
+    
     setLoading(true);
     setError(null);
     try {
       const response = await apiSendMessage(trimmed);
+      console.log
       setMessages(prev => {
-        const next = [...prev, { text: response.answer, isUser: false }];
+        const next = [...prev, { text: response.response, isUser: false }];
         persist(next);
         return next;
       });
@@ -77,5 +85,5 @@ export const useChat = () => {
     }
   };
 
-  return { messages, loading, error, sendChat };
+  return { messages, loading, error, sendChat, clearChat };
 };

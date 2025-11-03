@@ -7,7 +7,13 @@ const ChatMessages = ({ messages, loading }) => {
       {messages.map((m, i) => (
         <ChatBubble key={i} message={m.text} isUser={m.isUser} />
       ))}
-      {loading && <div className="message bot">Thinking...</div>}
+      {loading && (
+        <div className="loading-bubble">
+          <div className="dot"></div>
+          <div className="dot"></div>
+          <div className="dot"></div>
+        </div>
+      )}
     </div>
   );
 };
