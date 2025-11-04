@@ -6,8 +6,8 @@ from openai_sdk_resume_assistant.resume_agent import resume_agent
 
 
 class ChatService:
-    VECTORSTORE = "upload_vectorstore"
-    COLLECTION_NAME = "upload_collection"
+    VECTORSTORE = "resume_vectorstore"
+    COLLECTION_NAME = "ilyan_resume"
 
     def __init__(self):
         # Set the AzureAI client defaults
