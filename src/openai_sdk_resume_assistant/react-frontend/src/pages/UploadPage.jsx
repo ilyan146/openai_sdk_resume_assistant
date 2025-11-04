@@ -1,15 +1,17 @@
 import React, { useState } from 'react';
+import { useFileUpload } from '../hooks/useFileUpload';
 import '../styles/UploadPage.css';
 
 const UploadPage = () => {
   const [selectedFiles, setSelectedFiles] = useState([]);
-  const [uploading, setUploading] = useState(false);
   const [message, setMessage] = useState('');
+  const { upload, uploading, error, uploadResult, reset } = useFileUpload();
 
   const handleFileSelect = (e) => {
     const files = Array.from(e.target.files);
     setSelectedFiles(files);
     setMessage('');
+    reset();
   };
 
   const handleUpload = async () => {
@@ -18,26 +20,31 @@ const UploadPage = () => {
       return;
     }
 
-    setUploading(true);
     setMessage('');
 
     try {
-      // TODO: Connect to FastAPI backend
-      const formData = new FormData();
-      selectedFiles.forEach(file => {
-        formData.append('files', file);
-      });
-
-      // Placeholder for API call
-      // const response = await uploadFiles(formData);
+      const result = await upload(selectedFiles);
+      // Create success message with details
+      const successMsg = `Successfully uploaded ${result.pdf_count} PDF(s) and ${result.text_count} text file(s)!`;
       
-      await new Promise(resolve => setTimeout(resolve, 1500)); // Simulate upload
-      setMessage('Files uploaded successfully!');
+      // Add any errors or warnings if they exist
+      if (result.errors && result.errors.length > 0) {
+        const errorList = result.errors.join(', ');
+        setMessage(`${successMsg}\nWarnings: ${errorList}`);
+      } else {
+        setMessage(successMsg);
+      }
+      
+      // Clear selected files on success
       setSelectedFiles([]);
-    } catch (error) {
-      setMessage('Error uploading files');
-    } finally {
-      setUploading(false);
+      
+      // Clear the file input
+      const fileInput = document.getElementById('file-input');
+      if (fileInput) {
+        fileInput.value = '';
+      }
+    } catch (err) {
+      setMessage(`Error uploading files: ${err.message}`);
     }
   };
 
@@ -102,6 +109,12 @@ const UploadPage = () => {
         {message && (
           <div className={`message ${message.includes('Error') ? 'error' : 'success'}`}>
             {message}
+          </div>
+        )}
+
+        {error && (
+          <div className="message error">
+            {error}
           </div>
         )}
       </div>

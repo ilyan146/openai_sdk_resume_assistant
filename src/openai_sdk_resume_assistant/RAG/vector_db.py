@@ -96,7 +96,7 @@ class VectorDB:
                     ids.append(unique_id)
                     documents.append(text)
                     embeddings.append(self._get_embeddings(text).tolist())
-                    metadata.append({"page": index, "source": pdf_file, "file_name": pdf_file.name})
+                    metadata.append({"page": index, "source": str(pdf_file), "file_name": str(pdf_file.stem)})
 
             # Add the pdf data to the collection with embeddings
             # collection = self.get_or_create_collection(collection_name=collection_name)
