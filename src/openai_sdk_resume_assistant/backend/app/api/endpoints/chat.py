@@ -27,13 +27,13 @@ async def upload_resume_files(files: list[UploadFile] = File(...), service: Chat
         # Save uploaded files to temp directory
         for file in files:
             file_path = temp_dir / file.filename  # type: ignore
-            with open(file_path, "wb") as buffer:
+            with open(file_path, "wb") as buffer:  # type: ignore
                 shutil.copyfileobj(file.file, buffer)
 
         # Process files through the service
         result = service.process_uploaded_files(temp_dir)
 
-        if not result["success"]:
+        if not result.success:
             raise HTTPException(status_code=500, detail="Error processing uploaded files.")
 
         return result

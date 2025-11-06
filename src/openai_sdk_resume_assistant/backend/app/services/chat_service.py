@@ -1,12 +1,13 @@
 from pathlib import Path
 
+from openai_sdk_resume_assistant.backend.app.models.chat_schemas import UploadFilesResponse
 from openai_sdk_resume_assistant.client import AzureAIClient
-from openai_sdk_resume_assistant.RAG.vector_db import VectorDB
+from openai_sdk_resume_assistant.RAG.vector_db import VectorDB  # type: ignore
 from openai_sdk_resume_assistant.resume_agent import resume_agent
 
 
 class ChatService:
-    VECTORSTORE = "resume_vectorstore"
+    VECTORSTORE = "resume_vectorstore"  # Some defaults
     COLLECTION_NAME = "ilyan_resume"
 
     def __init__(self):
@@ -29,36 +30,36 @@ class ChatService:
         """
         return await self.agent.run_agent_with_mcp(question)
 
-    def process_uploaded_files(self, files_directory: Path | str) -> dict:
+    def process_uploaded_files(self, files_directory: Path | str) -> UploadFilesResponse:  # dict:
         """
         Process uploaded files and add them to the vector database.
         Automatically detects PDFs and text files and processes them accordingly.
         Args:
             files_directory: Directory containing the uploaded files
         Returns:
-            Dictionary with processing status and details
+            UploadFilesResponse with processing status and details
         """
         if isinstance(files_directory, str):
             files_directory = Path(files_directory)
 
-        result = {"pdf_count": 0, "text_count": 0, "errors": [], "success": False}
+        result = UploadFilesResponse(pdf_count=0, text_count=0, errors=[], success=False)
 
         try:
             # Check for PDF files
             pdf_files = list(files_directory.glob("*.pdf"))
             if pdf_files:
                 self.vector_db.add_pdf_to_collection(directory=files_directory, collection_name=self.COLLECTION_NAME)
-                result["pdf_count"] = len(pdf_files)
+                result.pdf_count = len(pdf_files)
 
             # Check for text files
             text_files = list(files_directory.glob("*.txt"))
             if text_files:
                 self.vector_db.add_texts_to_collection(directory=files_directory, collection_name=self.COLLECTION_NAME)
-                result["text_count"] = len(text_files)
+                result.text_count = len(text_files)
 
-            result["success"] = True
+            result.success = True
             return result
 
         except Exception as e:
-            result["errors"].append(str(e))
+            result.errors.append(str(e))
             return result
