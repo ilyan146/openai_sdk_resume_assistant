@@ -23,4 +23,9 @@ export const uploadFiles = async(files) => {
     return response.data;
 }
 
+export const listCollectionItems = async() => {
+    const response = await api.get('/api/chat/list_collection_items');
+    return response.data;
+}
+
 export default api;

@@ -44,3 +44,14 @@ async def upload_resume_files(files: list[UploadFile] = File(...), service: Chat
     finally:
         # Clean up temporary directory
         shutil.rmtree(temp_dir)
+
+
+# Endpoint for listing collection items
+@router.get("/list_collection_items")
+def list_collection_items(service: ChatService = Depends(ChatService)):
+    """List all items in the resume collection"""
+    try:
+        items = service.list_collection_items()
+        return items
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")

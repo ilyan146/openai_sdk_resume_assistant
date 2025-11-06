@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Any
 
 from openai_sdk_resume_assistant.backend.app.models.chat_schemas import UploadFilesResponse
 from openai_sdk_resume_assistant.client import AzureAIClient
@@ -63,3 +64,6 @@ class ChatService:
         except Exception as e:
             result.errors.append(str(e))
             return result
+
+    def list_collection_items(self) -> dict[str, Any]:
+        return self.vector_db.list_collection_items(collection_name=self.COLLECTION_NAME)

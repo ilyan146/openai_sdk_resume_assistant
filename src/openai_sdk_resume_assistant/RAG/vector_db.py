@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Any
 
 import chromadb
 import numpy as np
@@ -80,10 +81,10 @@ class VectorDB:
             reader = PdfReader(pdf_file)
 
             snake_file_name = pdf_file.stem.replace(" ", "_").lower()
-            ids = []
-            metadata = []
-            embeddings = []
-            documents = []
+            ids: list[str] = []
+            metadata: list[dict[str, Any]] = []
+            embeddings: list[np.ndarray] = []
+            documents: list[str] = []
 
             for index, page in tqdm(
                 enumerate(reader.pages),
@@ -100,7 +101,7 @@ class VectorDB:
 
             # Add the pdf data to the collection with embeddings
             # collection = self.get_or_create_collection(collection_name=collection_name)
-            collection.add(ids=ids, documents=documents, embeddings=embeddings, metadatas=metadata)
+            collection.add(ids=ids, documents=documents, embeddings=embeddings, metadatas=metadata)  # type: ignore
             logger.success(f"PDF documents added to the collection: {collection_name} successfully")
 
     # TODO: Create langchain based text parser from dir and add to collection [DONE]
@@ -108,18 +109,18 @@ class VectorDB:
         """Add text documents from a directory to a collection of vector database as vectors of pages"""
         if isinstance(directory, str):
             directory = Path(directory)
-        loader = GenericLoader.from_filesystem(str(directory), glob="**/*.txt")
-        documents = loader.load()
+        loader = GenericLoader.from_filesystem(str(directory), glob="**/*.txt")  # type:ignore
+        documents = loader.load()  # type: ignore
 
         # Instantiate text splitter
         text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=100, separators=["\n\n", "\n", " ", ""])
         # Create text chunks
-        chunks = text_splitter.split_documents(documents)
+        chunks = text_splitter.split_documents(documents)  # type: ignore
         # Loop over the chunks add creat a list of ids, documents, embedding
-        ids = []
-        metadata = []
-        embeddings = []
-        documents = []
+        ids: list[str] = []
+        metadata: list[dict[str, Any]] = []
+        embeddings: list[np.ndarray] = []
+        documents: list[str] = []
         collection = self.get_or_create_collection(collection_name=collection_name)
         logger.debug(f"Processing texts from directory: {directory} to collection: {collection_name} ......")
         for index, chunk in tqdm(
@@ -134,12 +135,12 @@ class VectorDB:
             metadata.append(
                 {
                     "page": index,
-                    "source": chunk.metadata.get("source", ""),
-                    "file_name": Path(chunk.metadata.get("source", "")).stem,
+                    "source": chunk.metadata.get("source", ""),  # type: ignore
+                    "file_name": Path(chunk.metadata.get("source", "")).stem,  # type: ignore
                 }
             )
 
-        collection.add(ids=ids, documents=documents, embeddings=embeddings, metadatas=metadata)
+        collection.add(ids=ids, documents=documents, embeddings=embeddings, metadatas=metadata)  # type: ignore
         logger.success(f"Text documents added to the collection: {collection_name} successfully")
 
     # Removing collection from the vector database
@@ -150,6 +151,40 @@ class VectorDB:
             logger.info(f"Collection {collection_name} deleted from the vector database")
         else:
             logger.warning(f"Collection {collection_name} does not exist in the vector database")
+
+    # New method to list all items in a collection
+    def list_collection_items(self, collection_name: str) -> dict[str, Any]:
+        """List all items in a specified collection"""
+        if collection_name not in self.collection_list:
+            logger.warning(f"Collection {collection_name} does not exist in the vector database")
+            return {"exists": False, "files": [], "count": 0}
+
+        collection = self.vector_db_client.get_collection(name=collection_name)
+
+        results = collection.get(include=["metadatas", "documents"])  # Returns a typed dict of GetResult
+
+        # Dict to hold the collection items
+        files_info: dict[str, Any] = {}
+
+        for metadata in results.get("metadatas", []):  # type: ignore
+            logger.debug(f"Metadata: {metadata}")
+            file_name: str = metadata.get("file_name", "Unknown")  # type: ignore
+            source: str = metadata.get("source", "Unknown")  # type: ignore
+
+            if file_name not in files_info:
+                files_info[file_name] = {
+                    "name": file_name,
+                    "source": source,
+                    "page_count": 0,
+                }
+            files_info[file_name]["page_count"] += 1
+
+        return {
+            "exists": True,
+            "files": list(files_info.values()),  # making list of the the dict_values obj in python
+            "files_count": len(files_info),
+            "total_chunks": len(results.get("ids", [])),
+        }
 
 
 if __name__ == "__main__":
