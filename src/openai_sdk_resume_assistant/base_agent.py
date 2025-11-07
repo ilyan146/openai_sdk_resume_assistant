@@ -1,8 +1,11 @@
+# type: ignore
+from collections.abc import AsyncGenerator
 from contextlib import AsyncExitStack, asynccontextmanager
 from typing import Any
 
 from agents import Agent, Runner
 from agents.mcp import MCPServerStdio
+from openai.types.responses import ResponseTextDeltaEvent
 
 
 class AIAgent:
@@ -77,3 +80,16 @@ class AIAgent:
             response = await Runner.run(active_agent, input=user_input)
 
         return response.final_output
+
+    # Add streaming support as per the agents sdk docs
+    async def run_agent_with_mcp_stream(self, user_input: str) -> AsyncGenerator[str, None]:
+        """
+        Stream agent responses as they are generated
+        """
+        async with self._get_mcp_servers() as servers:
+            active_agent = await self._create_agent(servers)
+            result = Runner.run_streamed(active_agent, input=user_input)
+
+            async for event in result.stream_events():
+                if event.type == "raw_response_event" and isinstance(event.data, ResponseTextDeltaEvent):
+                    yield event.data.delta

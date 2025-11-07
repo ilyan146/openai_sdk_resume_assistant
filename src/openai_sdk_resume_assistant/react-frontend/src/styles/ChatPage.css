@@ -217,3 +217,15 @@
   opacity: 0.4;
   cursor: not-allowed;
 }
+
+.streaming-indicator {
+  color: #666;
+  font-size: 20px;
+  animation: pulse 1.5s ease-in-out infinite;
+  margin: 10px;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 1; }
+}

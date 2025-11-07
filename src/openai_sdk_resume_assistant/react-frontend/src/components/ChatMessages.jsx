@@ -1,7 +1,16 @@
-import React from 'react';
+import React, {useEffect, useRef} from 'react';
 import ChatBubble from './ChatBubble';
 
-const ChatMessages = ({ messages, loading }) => {
+const ChatMessages = ({ messages, loading, streaming }) => {
+  const messagesEndRef = useRef(null);
+
+// Auto-scroll to bottom when messages change or during streaming
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages, streaming]);
+
+// const ChatMessages = ({ messages, loading }) => {
+  
   return (
     <div className="chat-messages">
       {messages.map((m, i) => (
@@ -14,6 +23,10 @@ const ChatMessages = ({ messages, loading }) => {
           <div className="dot"></div>
         </div>
       )}
+      {streaming && !loading && (
+        <div className="streaming-indicator">●</div>
+      )}
+      <div ref={messagesEndRef} />
     </div>
   );
 };

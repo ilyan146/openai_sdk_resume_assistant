@@ -1,3 +1,4 @@
+from collections.abc import AsyncGenerator
 from pathlib import Path
 from typing import Any
 
@@ -30,6 +31,19 @@ class ChatService:
             The response from the resume agent.
         """
         return await self.agent.run_agent_with_mcp(question)
+
+    # Add agent chat response streaming support
+    async def get_agent_response_stream(self, question: str) -> AsyncGenerator[str, None]:
+        """
+        Stream the agent response as it's generated.
+        Args:
+            question: The question to ask the resume agent.
+
+        Yields:
+            Text chunks as they are generated.
+        """
+        async for chunk in self.agent.run_agent_with_mcp_stream(question):
+            yield chunk
 
     def process_uploaded_files(self, files_directory: Path | str) -> UploadFilesResponse:  # dict:
         """

@@ -1,8 +1,10 @@
+import json
 import shutil
 import tempfile
 from pathlib import Path
 
 from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
+from fastapi.responses import StreamingResponse
 
 from openai_sdk_resume_assistant.backend.app.models.chat_schemas import QuestionRequest
 from openai_sdk_resume_assistant.backend.app.services.chat_service import ChatService
@@ -14,6 +16,21 @@ router = APIRouter(prefix="/chat", tags=["chat"])
 async def ask_resume_question(request: QuestionRequest, service: ChatService = Depends(ChatService)):
     response = await service.get_agent_response(request.question)
     return {"response": response}
+
+
+@router.post("/ask_stream")
+async def ask_question_stream(request: QuestionRequest, service: ChatService = Depends(ChatService)):
+    async def event_generator():
+        try:
+            async for chunk in service.get_agent_response_stream(request.question):
+                # Send as JSON for easier parsing on frontend
+                yield f"data: {json.dumps({'chunk': chunk})}\n\n"
+            # Send completion signal
+            yield f"data: {json.dumps({'done': True})}\n\n"
+        except Exception as e:
+            yield f"data: {json.dumps({'error': str(e)})}\n\n"
+
+    return StreamingResponse(event_generator(), media_type="text/event-stream")
 
 
 @router.post("/upload_files")
