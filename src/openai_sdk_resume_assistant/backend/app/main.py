@@ -1,15 +1,15 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from openai_sdk_resume_assistant.backend.app.api.endpoints.chat import router
+from openai_sdk_resume_assistant.backend.app.api.chat import router
 
 APP_TITLE = "CV API"
 APP_VERSION = "1.0.0"
 app = FastAPI(title=APP_TITLE, version=APP_VERSION)
 
-app.include_router(router, prefix="/api/v1")
+app.include_router(router, prefix="/api")
 
-ALLOWED_ORIGINS = ["http://localhost", "http://localhost:3000"]
+ALLOWED_ORIGINS = ["http://localhost", "http://localhost:3000", "http://localhost:5173"]  # Vite dev server
 app.add_middleware(
     CORSMiddleware,
     allow_origins=ALLOWED_ORIGINS,

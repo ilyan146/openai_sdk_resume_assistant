@@ -37,6 +37,7 @@ packages = ["src/openai_sdk_resume_assistant"]
 target-version = "py312"
 line-length = 130
 extend-exclude=["*.ipynb"]
+unsafe-fixes = true
 
 [tool.ruff.lint]
 select = [
