@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from openai_sdk_resume_assistant.backend.app.api.endpoints.chat import router
+from openai_sdk_resume_assistant.backend.app.api.chat import router
 
 APP_TITLE = "CV API"
 APP_VERSION = "1.0.0"
