@@ -8,7 +8,9 @@ authors = [
 ]
 requires-python = ">=3.12"
 dependencies = [
+    "aiostream>=0.7.1",
     "azure-identity>=1.23.1",
+    "beanie>=2.0.0",
     "chromadb>=1.2.0",
     "dotenv>=0.9.9",
     "fastmcp>=2.10.5",
@@ -17,6 +19,7 @@ dependencies = [
     "langchain-text-splitters>=1.0.0",
     "loguru>=0.7.3",
     "mcp-server-fetch>=2025.1.17",
+    "motor[srv]>=3.7.1",
     "notebook>=7.4.5",
     "openai>=1.96.1",
     "openai-agents>=0.2.0",
