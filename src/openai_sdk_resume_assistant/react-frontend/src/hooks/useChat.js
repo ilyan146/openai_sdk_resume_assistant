@@ -42,26 +42,6 @@ export const useChat = () => {
     setStreaming(true);
     setError(null);
 
-    // // Track index of assistant message 
-    // let assistantIndex;
-    // setMessages(prev => { // Getting the latest messages array and get the index of it
-    //   assistantIndex = prev.length - 1;
-    //   return prev;
-    // });
-    
-    // try {
-    //   const response = await apiSendMessage(trimmed);
-    //   console.log
-    //   setMessages(prev => {
-    //     const next = [...prev, { text: response.response, isUser: false }];
-    //     persist(next);
-    //     return next;
-    //   });
-    // } catch (e) {
-    //   setError('Error sending message');
-    // } finally {
-    //   setLoading(false);
-    // }
     await sendMessageStream(
       trimmed,
       // onChunk: Append text to the last message

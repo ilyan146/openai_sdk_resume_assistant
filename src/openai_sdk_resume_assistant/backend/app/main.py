@@ -5,7 +5,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from openai_sdk_resume_assistant.backend.app.api.chat import router
-from openai_sdk_resume_assistant.backend.app.api.mongodb import DEBUG, lifespan
+from openai_sdk_resume_assistant.backend.app.mongodb import DEBUG, lifespan
 
 APP_TITLE = "CV API"
 APP_VERSION = "1.0.0"

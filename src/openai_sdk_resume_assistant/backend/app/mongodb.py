@@ -22,7 +22,7 @@ async def lifespan(app: FastAPI):
         raise Exception("Cluster connection is not okay!")
 
     chat_mem_collection = database.get_collection(COLLECTION_NAME)
-    app.mongo_dal = MongoDAL(chat_mem_collection)
+    app.mongo_dal = MongoDAL(chat_mem_collection)  # type: ignore
 
     yield
 
