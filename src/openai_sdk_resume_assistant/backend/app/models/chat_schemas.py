@@ -34,3 +34,8 @@ class ChatMemory(BaseModel):
             chat_name=doc["chat_name"],
             chat_messages=[ChatMessage(**msg) for msg in doc.get("chat_messages", [])],
         )
+
+
+class ChatNameResponse(BaseModel):
+    id: str
+    chat_name: str
