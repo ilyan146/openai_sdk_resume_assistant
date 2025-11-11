@@ -4,20 +4,40 @@ const api = axios.create({
     baseURL: 'http://localhost:8000',
 });
 
+// Create new chat
+export const createChat = async (chatName) => {
+    const response = await api.post('/api/chat/create_chat_memory', null, {
+        params: { chat_name: chatName }
+    });
+    return response.data;
+};
+
+// Get all chats
+export const getAllChats = async () => {
+    const response = await api.get('/api/chat/all_chats');
+    return response.data;
+};
+
+// Get specific chat with history
+export const getChatHistory = async (chatId) => {
+    const response = await api.get(`/api/chat/chat_memory/${chatId}`);
+    return response.data;
+};
+
 export const sendMessage = async(message) => {
     const response = await api.post('/api/chat/ask', { question: message });
     return response.data;
 };
 
 // New function to send message and receive streaming response
-export const sendMessageStream = async(message, onChunk, onComplete, onError) => {
+export const sendMessageStream = async(message, chatId, onChunk, onComplete, onError) => {
     try {
         const response = await fetch(`${api.defaults.baseURL}/api/chat/ask_stream`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ question: message }),
+            body: JSON.stringify({ question: message, chat_id: chatId}),
         });
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);

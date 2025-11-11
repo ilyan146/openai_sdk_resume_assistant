@@ -6,6 +6,7 @@ from pydantic import BaseModel, Field
 
 class QuestionRequest(BaseModel):
     question: str
+    chat_id: str | None = None  # Add this field
 
 
 class UploadFilesResponse(BaseModel):

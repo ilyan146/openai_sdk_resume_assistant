@@ -19,12 +19,28 @@ async def ask_resume_question(request: QuestionRequest, service: ChatService = D
 
 
 @router.post("/ask_stream")
-async def ask_question_stream(request: QuestionRequest, service: ChatService = Depends(ChatService)):
+async def ask_question_stream(request: QuestionRequest, fastapi_request: Request, service: ChatService = Depends(ChatService)):
+    """Stream responses and store in chat history"""
+    # Verify chat exists
+    if not request.chat_id:
+        raise HTTPException(status_code=400, detail="chat_id is required")
+
+    chat = await fastapi_request.app.mongo_dal.get_chat_memory(request.chat_id)
+    if not chat:
+        raise HTTPException(status_code=404, detail="Chat memory not found")
+
+    await fastapi_request.app.mongo_dal.add_message_to_chat(request.chat_id, role="user", content=request.question)
+
     async def event_generator():
+        full_response = ""
         try:
             async for chunk in service.get_agent_response_stream(request.question):
+                full_response += chunk
                 # Send as JSON for easier parsing on frontend
                 yield f"data: {json.dumps({'chunk': chunk})}\n\n"
+
+            await fastapi_request.app.mongo_dal.add_message_to_chat(request.chat_id, role="assistant", content=full_response)
+
             # Send completion signal
             yield f"data: {json.dumps({'done': True})}\n\n"
         except Exception as e:
