@@ -5,7 +5,8 @@ import viteLogo from '/vite.svg'
 import React from 'react';
 import ChatWindow from './components/ChatWindow';
 import {Route, Routes} from 'react-router-dom';
-import ChatPage from './pages/ChatPage.jsx';
+import ChatListPage from './pages/ChatListPage';
+import ChatPage from './pages/ChatPage';
 import Header from './components/Header';
 import UploadPage from './pages/UploadPage';
 
@@ -19,7 +20,8 @@ const App = () => (
   <>
     <Header />
     <Routes>
-      <Route path="/" element={<ChatPage />} />
+      <Route path="/" element={<ChatListPage />} />
+      <Route path="/chat/:chatId" element={<ChatPage />} />
       <Route path="/upload" element={<UploadPage />} />
     </Routes>
   </>
