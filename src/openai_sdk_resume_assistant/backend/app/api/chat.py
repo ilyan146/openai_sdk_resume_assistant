@@ -3,10 +3,10 @@ import shutil
 import tempfile
 from pathlib import Path
 
-from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
+from fastapi import APIRouter, Depends, File, HTTPException, Request, UploadFile, status
 from fastapi.responses import StreamingResponse
 
-from openai_sdk_resume_assistant.backend.app.models.chat_schemas import QuestionRequest
+from openai_sdk_resume_assistant.backend.app.models.chat_schemas import ChatMemory, ChatNameResponse, QuestionRequest
 from openai_sdk_resume_assistant.backend.app.services.chat_service import ChatService
 
 router = APIRouter(prefix="/chat", tags=["chat"])
@@ -19,12 +19,28 @@ async def ask_resume_question(request: QuestionRequest, service: ChatService = D
 
 
 @router.post("/ask_stream")
-async def ask_question_stream(request: QuestionRequest, service: ChatService = Depends(ChatService)):
+async def ask_question_stream(request: QuestionRequest, fastapi_request: Request, service: ChatService = Depends(ChatService)):
+    """Stream responses and store in chat history"""
+    # Verify chat exists
+    if not request.chat_id:
+        raise HTTPException(status_code=400, detail="chat_id is required")
+
+    chat = await fastapi_request.app.mongo_dal.get_chat_memory(request.chat_id)
+    if not chat:
+        raise HTTPException(status_code=404, detail="Chat memory not found")
+
+    await fastapi_request.app.mongo_dal.add_message_to_chat(request.chat_id, role="user", content=request.question)
+
     async def event_generator():
+        full_response = ""
         try:
             async for chunk in service.get_agent_response_stream(request.question):
+                full_response += chunk
                 # Send as JSON for easier parsing on frontend
                 yield f"data: {json.dumps({'chunk': chunk})}\n\n"
+
+            await fastapi_request.app.mongo_dal.add_message_to_chat(request.chat_id, role="assistant", content=full_response)
+
             # Send completion signal
             yield f"data: {json.dumps({'done': True})}\n\n"
         except Exception as e:
@@ -72,3 +88,34 @@ def list_collection_items(service: ChatService = Depends(ChatService)):
         return items
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
+
+
+# MongoDB chat memory endpoints
+@router.post("/create_chat_memory", status_code=status.HTTP_201_CREATED)
+async def create_chat_memory(chat_name: str, request: Request) -> ChatNameResponse:
+    """Create a new chat memory in MongoDB"""
+    return ChatNameResponse(id=await request.app.mongo_dal.create_chat_memory(chat_name=chat_name), chat_name=chat_name)
+
+
+@router.get("/chat_memory/{chat_id}")
+async def get_chat_memory(chat_id: str, request: Request) -> ChatMemory:
+    """Get a specific chat memory by ID"""
+    chat = await request.app.mongo_dal.get_chat_memory(chat_id)
+    if not chat:
+        raise HTTPException(status_code=404, detail="Chat memory not found")
+    return chat
+
+
+@router.get("/all_chats")
+async def get_all_chats(request: Request, limit: int = 50) -> list[ChatMemory]:
+    """Get all chat memories"""
+    return await request.app.mongo_dal.get_all_chats(limit=limit)
+
+
+@router.post("/chat_memory/{chat_id}/message")
+async def add_message(chat_id: str, role: str, content: str, request: Request) -> ChatMemory:
+    """Add a message to an existing chat"""
+    chat = await request.app.mongo_dal.add_message_to_chat(chat_id, role, content)
+    if not chat:
+        raise HTTPException(status_code=404, detail="Chat memory not found")
+    return chat
