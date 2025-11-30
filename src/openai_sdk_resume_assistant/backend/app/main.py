@@ -17,8 +17,8 @@ ALLOWED_ORIGINS = [
     "http://localhost",
     "http://localhost:3000",
     "http://localhost:5173",
-    "https://openaisdkresumeassistant-production.up.railway.app",
-]  # Vite dev server
+    "https://openai-sdk-resume-assistant-lxrh-ilyan146s-projects.vercel.app/",
+]  # vercel hosted frontend end point
 app.add_middleware(
     CORSMiddleware,
     allow_origins=ALLOWED_ORIGINS,
