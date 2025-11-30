@@ -1,4 +1,5 @@
 # type: ignore
+import os
 from collections.abc import AsyncGenerator
 from contextlib import AsyncExitStack, asynccontextmanager
 from typing import Any
@@ -53,7 +54,9 @@ class AIAgent:
     async def _get_mcp_servers(self):  # -> List[MCPServerStdio]:  # type:ignore
         async with AsyncExitStack() as stack:
             tool_mcp_servers = [
-                await stack.enter_async_context(MCPServerStdio(params=params, client_session_timeout_seconds=60))  # type:ignore
+                await stack.enter_async_context(
+                    MCPServerStdio(params=params, client_session_timeout_seconds=60, env={**os.environ})
+                )  # type:ignore
                 for params in self.mcp_params_list
             ]
             yield tool_mcp_servers
