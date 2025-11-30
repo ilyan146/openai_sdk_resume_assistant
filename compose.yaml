@@ -1,0 +1,50 @@
+services:
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    ports:
+      - "27017:27017"  # Exposed only to localhost
+    volumes:
+      - mongodb_data:/data/db  # Persist data
+    environment:
+      - MONGO_INITDB_DATABASE=resume_db  # Optional: default database name
+    networks:
+      - resume_network
+
+  fastapi_backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: fastapi_backend
+    container_name: fastapi_backend
+    volumes:
+      - ./.env:/app/.env:ro
+    environment:
+      - PYTHONPATH=/app/src
+      - MONGODB_URI=mongodb://mongodb:27017/resume_db
+    ports:
+        - "8000:8000"
+    depends_on:
+      - mongodb
+    networks:
+      - resume_network
+  
+  react_frontend:
+    build:
+      context: ./src/openai_sdk_resume_assistant/react-frontend
+      dockerfile: Dockerfile
+    image: react_frontend
+    container_name: react_frontend
+    ports:
+      - "5173:5173"
+    depends_on:
+      - fastapi_backend
+    networks:
+      - resume_network
+
+volumes:
+  mongodb_data:  # Named volume for MongoDB persistence
+
+networks:
+  resume_network:  # Private network for containers
+    driver: bridge

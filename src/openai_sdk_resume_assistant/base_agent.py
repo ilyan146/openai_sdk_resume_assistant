@@ -1,4 +1,5 @@
 # type: ignore
+import os
 from collections.abc import AsyncGenerator
 from contextlib import AsyncExitStack, asynccontextmanager
 from typing import Any
@@ -49,11 +50,18 @@ class AIAgent:
         else:
             raise ValueError("mcp_params must be a dict or a list of dicts.")
 
+    @staticmethod
+    def _merge_env_with_params(params: dict[str, Any]) -> dict[str, Any]:
+        """Merge os.environ as base with any extra env from params."""
+        return {**params, "env": {**os.environ, **params.get("env", {})}}
+
     @asynccontextmanager
     async def _get_mcp_servers(self):  # -> List[MCPServerStdio]:  # type:ignore
         async with AsyncExitStack() as stack:
             tool_mcp_servers = [
-                await stack.enter_async_context(MCPServerStdio(params=params, client_session_timeout_seconds=60))  # type:ignore
+                await stack.enter_async_context(
+                    MCPServerStdio(params=self._merge_env_with_params(params), client_session_timeout_seconds=60)
+                )  # type:ignore
                 for params in self.mcp_params_list
             ]
             yield tool_mcp_servers

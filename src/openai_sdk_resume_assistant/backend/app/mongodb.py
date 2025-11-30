@@ -10,11 +10,14 @@ COLLECTION_NAME = "chat_memories"
 MONGODB_URI = os.environ["MONGODB_URI"]
 DEBUG = os.environ.get("DEBUG", "").strip().lower() in {"1", "true", "on", "yes"}
 
+DATABASE_NAME = os.environ.get("DATABASE_NAME", "resume_db")
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     client = AsyncIOMotorClient(MONGODB_URI)
-    database = client.get_default_database()  # Connect to default database from URI
+    # database = client.get_default_database()  # Connect to default database from URI
+    database = client[DATABASE_NAME]
 
     # Ensure database connection available
     pong = await database.command("ping")

@@ -23,8 +23,9 @@ COPY pyproject.toml uv.lock* .env* ./
 COPY src/ ./src
 
 # Install dependencies using uv
-RUN --mount=type=cache,target=/root/.cache/uv \
-    uv sync --frozen --no-dev
+# RUN --mount=type=cache,target=/root/.cache/uv \
+    # uv sync --frozen --no-dev
+RUN uv sync --frozen --no-dev
 
 # Copy the source code into the container.
 # COPY ./backend/app ./app
