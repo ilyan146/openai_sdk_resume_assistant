@@ -11,21 +11,23 @@ APP_TITLE = "CV API"
 APP_VERSION = "1.0.0"
 app = FastAPI(title=APP_TITLE, version=APP_VERSION, lifespan=lifespan, debug=DEBUG)
 
-app.include_router(router, prefix="/api")
 
 ALLOWED_ORIGINS = [
     "http://localhost",
     "http://localhost:3000",
     "http://localhost:5173",
-    "https://openai-sdk-resume-assistant-lxrh-ilyan146s-projects.vercel.app/",
+    "https://openai-sdk-resume-assistant-lxrh-ilyan146s-projects.vercel.app",
 ]  # vercel hosted frontend end point
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=ALLOWED_ORIGINS,
+    # allow_origins=ALLOWED_ORIGINS,
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.include_router(router, prefix="/api")
 
 
 @app.get("/", tags=["health"])
