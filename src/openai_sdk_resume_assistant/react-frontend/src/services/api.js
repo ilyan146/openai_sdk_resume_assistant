@@ -1,7 +1,11 @@
 import axios from 'axios';
 
+
+// Debug: Log the API URL
+console.log('VITE_API_URL:', import.meta.env.VITE_API_URL);
+
 const api = axios.create({
-    baseURL: process.env.REACT_APP_API_URL || 'http://localhost:8000',
+    baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8000',
 });
 
 // Create new chat
