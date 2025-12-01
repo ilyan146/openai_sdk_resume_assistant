@@ -13,7 +13,7 @@ APP_VERSION = "1.0.0"
 app = FastAPI(title=APP_TITLE, version=APP_VERSION, lifespan=lifespan, debug=DEBUG)
 
 # FRONTEND_URL from env or hardcoded for CORS
-FRONTEND_URL = os.getenv("FRONTEND_URL", "https://openai-sdk-resume-assistant-lxrh-ilyan146s-projects.vercel.app")
+FRONTEND_URL = os.getenv("FRONTEND_URL", "https://openai-sdk-resume-assistant.vercel.app")
 
 
 ALLOWED_ORIGINS = [
@@ -21,6 +21,7 @@ ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://localhost:5173",
     FRONTEND_URL,
+    "https://openai-sdk-resume-assistant-lxrh-ilyan146s-projects.vercel.app",
 ]  # vercel hosted frontend end point
 app.add_middleware(
     CORSMiddleware,
