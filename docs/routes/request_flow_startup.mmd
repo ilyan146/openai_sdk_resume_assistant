@@ -1,0 +1,17 @@
+sequenceDiagram
+    participant Railway as Railway Platform
+    participant Main as main.py
+    participant Lifespan as mongodb.py (lifespan)
+    participant MongoDB as MongoDB
+
+    Railway->>Main: Start container
+    Main->>Lifespan: Enter lifespan context
+    Lifespan->>MongoDB: Connect (AsyncIOMotorClient)
+    MongoDB-->>Lifespan: Connection established
+    Lifespan->>MongoDB: Ping (health check)
+    MongoDB-->>Lifespan: Pong
+    Lifespan->>Main: Attach app.mongodb, app.mongo_dal
+    Main->>Main: Add CORS middleware
+    Main->>Main: Include router
+    Main-->>Railway: Server ready on 0.0.0.0:8000
+    

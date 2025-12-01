@@ -1,0 +1,18 @@
+sequenceDiagram
+    participant User as User (Browser)
+    participant CLP as ChatListPage.jsx
+    participant API as api.js
+    participant Router as chat.py
+    participant DAL as MongoDAL
+    participant DB as MongoDB
+
+    User->>CLP: Navigate to chat list
+    CLP->>API: getAllChats()
+    API->>Router: GET /api/chat/all_chats
+    Router->>DAL: get_all_chats()
+    DAL->>DB: find({})
+    DB-->>DAL: [ChatMemory, ...]
+    DAL-->>Router: List[ChatMemory]
+    Router-->>API: 200 OK + JSON
+    API-->>CLP: chats[]
+    CLP-->>User: Render chat list
