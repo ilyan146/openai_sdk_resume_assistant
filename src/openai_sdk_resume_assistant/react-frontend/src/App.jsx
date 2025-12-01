@@ -1,10 +1,14 @@
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+// import reactLogo from './assets/react.svg'
+// import viteLogo from '/vite.svg'
 
 // // Starting edits from here
 import React from 'react';
-import ChatWindow from './components/ChatWindow';
-import {Route, Routes} from 'react-router-dom';
+// import ChatWindow from './components/ChatWindow';
+// import {Route, Routes} from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import ProtectedRoute from './components/ProtectedRoute';
+import AuthPage from './pages/AuthPage';
+import { AuthProvider } from './components/AuthProvider';
 import ChatListPage from './pages/ChatListPage';
 import ChatPage from './pages/ChatPage';
 import Header from './components/Header';
@@ -16,16 +20,60 @@ import UploadPage from './pages/UploadPage';
 
 // export default App;
 
-const App = () => (
-  <>
-    <Header />
-    <Routes>
-      <Route path="/" element={<ChatListPage />} />
-      <Route path="/chat/:chatId" element={<ChatPage />} />
-      <Route path="/upload" element={<UploadPage />} />
-    </Routes>
-  </>
-);
+// const App = () => (
+//   <>
+//     <Header />
+//     <Routes>
+//       <Route path="/" element={<ChatListPage />} />
+//       <Route path="/chat/:chatId" element={<ChatPage />} />
+//       <Route path="/upload" element={<UploadPage />} />
+//     </Routes>
+//   </>
+// );
+// export default App;
+
+const App = () => {
+    return (
+        <AuthProvider>
+            <Router>
+                <Routes>
+                    {/* Public Route */}
+                    <Route path="/auth" element={<AuthPage />} />
+
+                    {/* Protected Routes */}
+                    <Route
+                        path="/"
+                        element={
+                            <ProtectedRoute>
+                              <Header title="Chats" />
+                                <ChatListPage />
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route
+                        path="/chat/:chatId"
+                        element={
+                            <ProtectedRoute>
+                              <Header title="Chat" showBack />
+                                <ChatPage />
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route
+                        path="/upload"
+                        element={
+                            <ProtectedRoute>
+                              <Header title="Upload" showBack />
+                                <UploadPage />
+                            </ProtectedRoute>
+                        }
+                    />
+                </Routes>
+            </Router>
+        </AuthProvider>
+    );
+};
+
 export default App;
 
 

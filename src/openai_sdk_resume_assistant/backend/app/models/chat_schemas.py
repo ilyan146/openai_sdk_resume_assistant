@@ -27,6 +27,7 @@ class UploadFilesResponse(BaseModel):
 class ChatMemory(BaseModel):
     id: str
     chat_name: str
+    user_id: str
     chat_messages: list[ChatMessage] = Field(default_factory=list)
     created_at: datetime | None = None
 
@@ -35,6 +36,7 @@ class ChatMemory(BaseModel):
         return ChatMemory(
             id=str(doc["_id"]),
             chat_name=doc["chat_name"],
+            user_id=doc.get("user_id", ""),
             chat_messages=[ChatMessage(**msg) for msg in doc.get("chat_messages", [])],
             created_at=doc.get("created_at"),
         )
@@ -43,3 +45,4 @@ class ChatMemory(BaseModel):
 class ChatNameResponse(BaseModel):
     id: str
     chat_name: str
+    user_id: str
