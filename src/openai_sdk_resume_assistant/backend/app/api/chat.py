@@ -7,7 +7,9 @@ from fastapi import APIRouter, Depends, File, HTTPException, Request, UploadFile
 from fastapi.responses import StreamingResponse
 
 from openai_sdk_resume_assistant.backend.app.models.chat_schemas import ChatMemory, ChatNameResponse, QuestionRequest
+from openai_sdk_resume_assistant.backend.app.mongodb import User
 from openai_sdk_resume_assistant.backend.app.services.chat_service import ChatService
+from openai_sdk_resume_assistant.backend.app.users import current_active_user
 
 router = APIRouter(prefix="/chat", tags=["chat"])
 
@@ -19,13 +21,20 @@ async def ask_resume_question(request: QuestionRequest, service: ChatService = D
 
 
 @router.post("/ask_stream")
-async def ask_question_stream(request: QuestionRequest, fastapi_request: Request, service: ChatService = Depends(ChatService)):
+async def ask_question_stream(
+    request: QuestionRequest,
+    fastapi_request: Request,
+    user: User = Depends(current_active_user),
+    service: ChatService = Depends(ChatService),
+):
     """Stream responses and store in chat history"""
     # Verify chat exists
     if not request.chat_id:
         raise HTTPException(status_code=400, detail="chat_id is required")
 
-    chat = await fastapi_request.app.mongo_dal.get_chat_memory(request.chat_id)
+    # chat = await fastapi_request.app.mongo_dal.get_chat_memory(request.chat_id)
+    # Verify chat belongs to user
+    chat = await fastapi_request.app.mongo_dal.get_chat_memory_for_user(chat_id=request.chat_id, user_id=str(user.id))
     if not chat:
         raise HTTPException(status_code=404, detail="Chat memory not found")
 
@@ -58,7 +67,9 @@ async def ask_question_stream(request: QuestionRequest, fastapi_request: Request
 
 
 @router.post("/upload_files")
-async def upload_resume_files(files: list[UploadFile] = File(...), service: ChatService = Depends(ChatService)):
+async def upload_resume_files(
+    files: list[UploadFile] = File(...), _user: User = Depends(current_active_user), service: ChatService = Depends(ChatService)
+):
     """Upload files route for uploading PDFs and Text Files to the vector database"""
 
     # Create a temporary directory for uploaded files
@@ -89,7 +100,7 @@ async def upload_resume_files(files: list[UploadFile] = File(...), service: Chat
 
 # Endpoint for listing collection items
 @router.get("/list_collection_items")
-def list_collection_items(service: ChatService = Depends(ChatService)):
+def list_collection_items(_user: User = Depends(current_active_user), service: ChatService = Depends(ChatService)):
     """List all items in the resume collection"""
     try:
         items = service.list_collection_items()
@@ -100,39 +111,66 @@ def list_collection_items(service: ChatService = Depends(ChatService)):
 
 # MongoDB chat memory endpoints
 @router.post("/create_chat_memory", status_code=status.HTTP_201_CREATED)
-async def create_chat_memory(chat_name: str, request: Request) -> ChatNameResponse:
-    """Create a new chat memory in MongoDB"""
-    return ChatNameResponse(id=await request.app.mongo_dal.create_chat_memory(chat_name=chat_name), chat_name=chat_name)
+async def create_chat_memory(
+    chat_name: str,
+    request: Request,
+    user: User = Depends(current_active_user),
+) -> ChatNameResponse:
+    """Create a new chat memory in MongoDB for current user"""
+    chat_id = await request.app.mongo_dal.create_chat_memory(
+        chat_name=chat_name,
+        user_id=str(user.id),  # Pass user_id
+    )
+    return ChatNameResponse(id=chat_id, chat_name=chat_name, user_id=str(user.id))
 
 
 @router.get("/chat_memory/{chat_id}")
-async def get_chat_memory(chat_id: str, request: Request) -> ChatMemory:
-    """Get a specific chat memory by ID"""
-    chat = await request.app.mongo_dal.get_chat_memory(chat_id)
+async def get_chat_memory(
+    chat_id: str,
+    request: Request,
+    user: User = Depends(current_active_user),
+) -> ChatMemory:
+    """Get a specific chat memory if it belongs to the current user"""
+    chat = await request.app.mongo_dal.get_chat_memory_for_user(chat_id=chat_id, user_id=str(user.id))
     if not chat:
         raise HTTPException(status_code=404, detail="Chat memory not found")
     return chat
 
 
 @router.delete("/chat_memory/{chat_id}", status_code=status.HTTP_200_OK)
-async def delete_chat_memory(chat_id: str, request: Request) -> dict:
+async def delete_chat_memory(
+    chat_id: str,
+    request: Request,
+    user: User = Depends(current_active_user),
+) -> dict:
     """Delete a chat memory by ID"""
-    deleted = await request.app.mongo_dal.delete_chat_memory(chat_id)
+    deleted = await request.app.mongo_dal.delete_chat_memory(chat_id, user_id=str(user.id))
     if not deleted:
         raise HTTPException(status_code=404, detail="Chat memory not found")
     return {"message": "Chat deleted successfully", "chat_id": chat_id}
 
 
 @router.get("/all_chats")
-async def get_all_chats(request: Request, limit: int = 50) -> list[ChatMemory]:
+async def get_all_chats(
+    request: Request,
+    limit: int = 50,
+    user: User = Depends(current_active_user),
+) -> list[ChatMemory]:
     """Get all chat memories"""
-    return await request.app.mongo_dal.get_all_chats(limit=limit)
+    return await request.app.mongo_dal.get_all_chats(user_id=str(user.id), limit=limit)
 
 
 @router.post("/chat_memory/{chat_id}/message")
-async def add_message(chat_id: str, role: str, content: str, request: Request) -> ChatMemory:
+async def add_message(
+    chat_id: str, role: str, content: str, request: Request, user: User = Depends(current_active_user)
+) -> ChatMemory:
     """Add a message to an existing chat"""
-    chat = await request.app.mongo_dal.add_message_to_chat(chat_id, role, content)
+    # First verify the chat belongs to user
+    chat = await request.app.mongo_dal.get_chat_memory_for_user(chat_id=chat_id, user_id=str(user.id))
     if not chat:
         raise HTTPException(status_code=404, detail="Chat memory not found")
-    return chat
+
+    updated_chat = await request.app.mongo_dal.add_message_to_chat(chat_id, role, content)
+    if not updated_chat:
+        raise HTTPException(status_code=404, detail="Chat memory not found")
+    return updated_chat

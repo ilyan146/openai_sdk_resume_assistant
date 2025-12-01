@@ -1,9 +1,16 @@
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
 import '../styles/Header.css';
 
 const Header = () => {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user, logout } = useAuth();
+  const handleLogout = async () => {
+    await logout();
+    navigate('/auth');
+  };
 
   return (
     <header className="app-header">
@@ -23,6 +30,15 @@ const Header = () => {
             Upload
           </Link>
         </nav>
+
+        {user && (
+          <div className="header-user">
+            <span className="user-email">{user.email}</span>
+            <button onClick={handleLogout} className="logout-button">
+              Logout
+            </button>
+          </div>
+        )}
       </div>
     </header>
   );

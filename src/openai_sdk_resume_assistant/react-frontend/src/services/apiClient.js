@@ -1,0 +1,19 @@
+import axios from 'axios';
+
+// Debug: Log the API URL
+console.log('VITE_API_URL:', import.meta.env.VITE_API_URL);
+
+const api = axios.create({
+    baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8000',
+});
+
+// Add token to requests if available
+api.interceptors.request.use((config) => {
+    const token = localStorage.getItem('access_token');
+    if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+});
+
+export default api;
