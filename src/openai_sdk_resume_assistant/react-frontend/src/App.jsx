@@ -45,6 +45,7 @@ const App = () => {
                         path="/"
                         element={
                             <ProtectedRoute>
+                              <Header title="Chats" />
                                 <ChatListPage />
                             </ProtectedRoute>
                         }
@@ -53,6 +54,7 @@ const App = () => {
                         path="/chat/:chatId"
                         element={
                             <ProtectedRoute>
+                              <Header title="Chat" showBack />
                                 <ChatPage />
                             </ProtectedRoute>
                         }
@@ -61,6 +63,7 @@ const App = () => {
                         path="/upload"
                         element={
                             <ProtectedRoute>
+                              <Header title="Upload" showBack />
                                 <UploadPage />
                             </ProtectedRoute>
                         }

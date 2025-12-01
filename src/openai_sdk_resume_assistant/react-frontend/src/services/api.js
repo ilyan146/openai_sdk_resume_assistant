@@ -42,11 +42,23 @@ export const sendMessage = async(message) => {
 // New function to send message and receive streaming response
 export const sendMessageStream = async(message, chatId, chatHistory, onChunk, onComplete, onError) => {
     try {
+        // Get the token from localStorage
+        const token = localStorage.getItem('access_token');
+        
+        const headers = {
+            'Content-Type': 'application/json',
+        };
+        
+        // Add Authorization header if token exists
+        if (token) {
+            headers['Authorization'] = `Bearer ${token}`;
+        }
         const response = await fetch(`${api.defaults.baseURL}/api/chat/ask_stream`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
+            // headers: {
+            //     'Content-Type': 'application/json',
+            // },
+            headers: headers,
             body: JSON.stringify({ 
                 question: message, 
                 chat_id: chatId,
