@@ -18,7 +18,8 @@ RUN apt-get update && apt-get install -y \
 RUN npm install -g @playwright/mcp@latest
 
 # Copy dependency files
-COPY pyproject.toml uv.lock* .env* ./
+# COPY pyproject.toml uv.lock* .env* ./
+COPY pyproject.toml uv.lock* ./
 
 COPY src/ ./src
 

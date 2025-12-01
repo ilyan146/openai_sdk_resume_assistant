@@ -17,8 +17,10 @@ services:
       dockerfile: Dockerfile
     image: fastapi_backend
     container_name: fastapi_backend
-    volumes:
-      - ./.env:/app/.env:ro
+    env_file:
+      - .env
+    # volumes:
+    #   - ./.env:/app/.env:ro
     environment:
       - PYTHONPATH=/app/src
       - MONGODB_URI=mongodb://mongodb:27017/resume_db
