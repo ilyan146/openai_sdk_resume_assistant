@@ -39,14 +39,18 @@ export const sendMessage = async(message) => {
 };
 
 // New function to send message and receive streaming response
-export const sendMessageStream = async(message, chatId, onChunk, onComplete, onError) => {
+export const sendMessageStream = async(message, chatId, chatHistory, onChunk, onComplete, onError) => {
     try {
         const response = await fetch(`${api.defaults.baseURL}/api/chat/ask_stream`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ question: message, chat_id: chatId}),
+            body: JSON.stringify({ 
+                question: message, 
+                chat_id: chatId,
+                chat_history: chatHistory || []
+            }),
         });
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);

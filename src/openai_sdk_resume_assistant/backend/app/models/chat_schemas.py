@@ -4,9 +4,17 @@ from uuid import uuid4
 from pydantic import BaseModel, Field
 
 
+class ChatMessage(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid4()))
+    role: str = Field(..., description="Role of the message sender, e.g., 'user' or 'agent'")
+    content: str
+    timestamp: datetime = datetime.utcnow()  # type: ignore
+
+
 class QuestionRequest(BaseModel):
     question: str
     chat_id: str | None = None
+    chat_history: list[ChatMessage] = Field(default_factory=list)
 
 
 class UploadFilesResponse(BaseModel):
@@ -14,13 +22,6 @@ class UploadFilesResponse(BaseModel):
     text_count: int
     errors: list[str]
     success: bool
-
-
-class ChatMessage(BaseModel):
-    id: str = Field(default_factory=lambda: str(uuid4()))
-    role: str = Field(..., description="Role of the message sender, e.g., 'user' or 'agent'")
-    content: str
-    timestamp: datetime = datetime.utcnow()  # type: ignore
 
 
 class ChatMemory(BaseModel):
