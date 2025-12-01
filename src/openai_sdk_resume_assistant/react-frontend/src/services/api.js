@@ -28,6 +28,11 @@ export const getChatHistory = async (chatId) => {
     return response.data;
 };
 
+export const deleteChatMemory = async (chatId) => {
+    const response = await api.delete(`/api/chat/chat_memory/${chatId}`);
+    return response.data;
+};
+
 export const sendMessage = async(message) => {
     const response = await api.post('/api/chat/ask', { question: message });
     return response.data;

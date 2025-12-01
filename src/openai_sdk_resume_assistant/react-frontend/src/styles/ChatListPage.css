@@ -1,3 +1,5 @@
+@import "tailwindcss";
+
 /* Page background - purple gradient with proper sizing */
 .chat-list-page {
   min-height: 100vh;
@@ -74,6 +76,8 @@
   border-radius: 10px;
   font-size: 16px;
   font-family: inherit;
+  color: #333;
+  background-color: white;
 }
 
 .new-chat-input input:focus {

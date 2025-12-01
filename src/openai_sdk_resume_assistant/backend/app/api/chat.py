@@ -106,6 +106,15 @@ async def get_chat_memory(chat_id: str, request: Request) -> ChatMemory:
     return chat
 
 
+@router.delete("/chat_memory/{chat_id}", status_code=status.HTTP_200_OK)
+async def delete_chat_memory(chat_id: str, request: Request) -> dict:
+    """Delete a chat memory by ID"""
+    deleted = await request.app.mongo_dal.delete_chat_memory(chat_id)
+    if not deleted:
+        raise HTTPException(status_code=404, detail="Chat memory not found")
+    return {"message": "Chat deleted successfully", "chat_id": chat_id}
+
+
 @router.get("/all_chats")
 async def get_all_chats(request: Request, limit: int = 50) -> list[ChatMemory]:
     """Get all chat memories"""

@@ -27,6 +27,7 @@ class ChatMemory(BaseModel):
     id: str
     chat_name: str
     chat_messages: list[ChatMessage] = Field(default_factory=list)
+    created_at: datetime | None = None
 
     @staticmethod
     def from_doc(doc) -> "ChatMemory":  # To convert back to pydantic model
@@ -34,6 +35,7 @@ class ChatMemory(BaseModel):
             id=str(doc["_id"]),
             chat_name=doc["chat_name"],
             chat_messages=[ChatMessage(**msg) for msg in doc.get("chat_messages", [])],
+            created_at=doc.get("created_at"),
         )
 
 
