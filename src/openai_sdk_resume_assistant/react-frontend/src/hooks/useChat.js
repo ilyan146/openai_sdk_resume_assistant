@@ -64,11 +64,19 @@ export const useChat = (chatId) => {
     //   return next;
     // });
 
+    // Build chat history for context BEFORE adding new message
+    const chatHistory = messages.map(msg => ({
+      role: msg.isUser ? 'user' : 'assistant',
+      content: msg.text
+    }));
+
+    console.log('[DEBUG] Sending chat history:', chatHistory);
+
     // Add user message (removed persist call)
     setMessages(prev => [...prev, { text: trimmed, isUser: true }]);
 
     // Create empty assistant message that will be filled in as chunks arrive
-    const assistantMessage = { text: 'Getting Assistant response.....\n', isUser: false };
+    const assistantMessage = { text: 'Getting Agent Response...\n', isUser: false };
     setMessages(prev => [...prev, assistantMessage]);
 
     setLoading(true);
@@ -79,6 +87,7 @@ export const useChat = (chatId) => {
       trimmed,
       chatId,
       // onChunk: Append text to the last message
+      chatHistory,
       (chunk) => {
         setLoading(false); // Hide loading dots once streaming starts
         setMessages(prev => {

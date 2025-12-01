@@ -29,12 +29,20 @@ async def ask_question_stream(request: QuestionRequest, fastapi_request: Request
     if not chat:
         raise HTTPException(status_code=404, detail="Chat memory not found")
 
+    # Debug log
+    print(f"[DEBUG] Received chat_history: {len(request.chat_history)} messages")
+    for msg in request.chat_history:
+        print(f"  - {msg.role}: {msg.content[:50]}...")
+
     await fastapi_request.app.mongo_dal.add_message_to_chat(request.chat_id, role="user", content=request.question)
 
     async def event_generator():
         full_response = ""
         try:
-            async for chunk in service.get_agent_response_stream(request.question):
+            async for chunk in service.get_agent_response_stream(
+                request.question,
+                chat_history=request.chat_history,
+            ):
                 full_response += chunk
                 # Send as JSON for easier parsing on frontend
                 yield f"data: {json.dumps({'chunk': chunk})}\n\n"
