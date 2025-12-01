@@ -28,20 +28,29 @@ export const getChatHistory = async (chatId) => {
     return response.data;
 };
 
+export const deleteChatMemory = async (chatId) => {
+    const response = await api.delete(`/api/chat/chat_memory/${chatId}`);
+    return response.data;
+};
+
 export const sendMessage = async(message) => {
     const response = await api.post('/api/chat/ask', { question: message });
     return response.data;
 };
 
 // New function to send message and receive streaming response
-export const sendMessageStream = async(message, chatId, onChunk, onComplete, onError) => {
+export const sendMessageStream = async(message, chatId, chatHistory, onChunk, onComplete, onError) => {
     try {
         const response = await fetch(`${api.defaults.baseURL}/api/chat/ask_stream`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ question: message, chat_id: chatId}),
+            body: JSON.stringify({ 
+                question: message, 
+                chat_id: chatId,
+                chat_history: chatHistory || []
+            }),
         });
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);

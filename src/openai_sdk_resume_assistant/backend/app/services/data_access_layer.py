@@ -1,5 +1,6 @@
 # type: ignore
 
+from datetime import datetime
 
 from bson import ObjectId
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -13,7 +14,9 @@ class MongoDAL:
         self._mongo_mem_collection = mongo_mem_collection
 
     async def create_chat_memory(self, chat_name: str, session=None) -> str:
-        response = await self._mongo_mem_collection.insert_one({"chat_name": chat_name, "chat_messages": []}, session=session)
+        response = await self._mongo_mem_collection.insert_one(
+            {"chat_name": chat_name, "chat_messages": [], "created_at": datetime.utcnow()}, session=session
+        )
         return str(response.inserted_id)
 
     async def get_chat_memory(self, id: str | ObjectId, session=None) -> ChatMemory:
@@ -39,3 +42,8 @@ class MongoDAL:
         cursor = self._mongo_mem_collection.find({}, session=session).limit(limit)
         docs = await cursor.to_list(length=limit)
         return [ChatMemory.from_doc(doc) for doc in docs]
+
+    async def delete_chat_memory(self, chat_id: str, session=None) -> bool:
+        """Delete a chat memory by ID"""
+        result = await self._mongo_mem_collection.delete_one({"_id": ObjectId(chat_id)}, session=session)
+        return result.deleted_count > 0

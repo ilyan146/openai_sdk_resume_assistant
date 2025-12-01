@@ -33,7 +33,7 @@ class ChatService:
         return await self.agent.run_agent_with_mcp(question)
 
     # Add agent chat response streaming support
-    async def get_agent_response_stream(self, question: str) -> AsyncGenerator[str, None]:
+    async def get_agent_response_stream(self, question: str, chat_history: list | None = None) -> AsyncGenerator[str, None]:
         """
         Stream the agent response as it's generated.
         Args:
@@ -42,8 +42,42 @@ class ChatService:
         Yields:
             Text chunks as they are generated.
         """
-        async for chunk in self.agent.run_agent_with_mcp_stream(question):
+        # Build context string from chat history
+        prompt = self._build_prompt_with_history(question, chat_history)
+
+        # Debug logging
+        print("[DEBUG] Final prompt being sent to agent:")
+        print(prompt)
+        print("-" * 50)
+
+        async for chunk in self.agent.run_agent_with_mcp_stream(prompt):
             yield chunk
+
+    def _build_prompt_with_history(self, question: str, chat_history: list | None = None) -> str:
+        """Build a prompt string that includes chat history for context."""
+        # No history - just return the question
+        if not chat_history or len(chat_history) == 0:
+            return question
+
+        # Limit to last 6 messages
+        recent_history = chat_history[-6:]
+
+        # Build simple history format
+        history_lines = []
+        for msg in recent_history:
+            role = msg.role if hasattr(msg, "role") else msg.get("role", "user")
+            content = msg.content if hasattr(msg, "content") else msg.get("content", "")
+            prefix = "User" if role == "user" else "Assistant"
+            history_lines.append(f"{prefix}: {content}")
+
+        # Keep prompt simple - don't override agent instructions
+        prompt = f"""Conversation history:
+        {chr(10).join(history_lines)}
+
+        Current question: {question}"""
+
+        print(f"[DEBUG] Built prompt:\n{prompt}")
+        return prompt
 
     def process_uploaded_files(self, files_directory: Path | str) -> UploadFilesResponse:  # dict:
         """
