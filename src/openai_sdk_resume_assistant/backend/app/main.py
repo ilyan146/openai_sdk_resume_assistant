@@ -1,3 +1,4 @@
+import os
 import sys
 
 import uvicorn
@@ -11,17 +12,20 @@ APP_TITLE = "CV API"
 APP_VERSION = "1.0.0"
 app = FastAPI(title=APP_TITLE, version=APP_VERSION, lifespan=lifespan, debug=DEBUG)
 
+# FRONTEND_URL from env or hardcoded for CORS
+FRONTEND_URL = os.getenv("FRONTEND_URL", "https://openai-sdk-resume-assistant-lxrh-ilyan146s-projects.vercel.app")
+
 
 ALLOWED_ORIGINS = [
     "http://localhost",
     "http://localhost:3000",
     "http://localhost:5173",
-    "https://openai-sdk-resume-assistant-lxrh-ilyan146s-projects.vercel.app",
+    FRONTEND_URL,
 ]  # vercel hosted frontend end point
 app.add_middleware(
     CORSMiddleware,
-    # allow_origins=ALLOWED_ORIGINS,
-    allow_origins=["*"],
+    allow_origins=ALLOWED_ORIGINS,
+    # allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
