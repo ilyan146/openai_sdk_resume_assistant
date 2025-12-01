@@ -1,0 +1,18 @@
+sequenceDiagram
+    participant User as User
+    participant CLP as ChatListPage.jsx
+    participant API as api.js
+    participant Router as chat.py
+    participant DAL as MongoDAL
+    participant DB as MongoDB
+
+    User->>CLP: Click "New Chat"
+    CLP->>API: createChat(name)
+    API->>Router: POST /api/chat/create_chat_memory?chat_name=name
+    Router->>DAL: create_chat_memory(name)
+    DAL->>DB: insert_one({chat_name, chat_messages: []})
+    DB-->>DAL: inserted_id
+    DAL-->>Router: chat_id
+    Router-->>API: 201 Created + {chat_id}
+    API-->>CLP: chat_id
+    CLP->>CLP: Navigate to /chat/{chat_id}

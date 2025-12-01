@@ -1,0 +1,22 @@
+sequenceDiagram
+    participant User as User
+    participant UP as UploadPage.jsx
+    participant UF as useFileUpload.js
+    participant API as api.js
+    participant Router as chat.py
+    participant CS as ChatService
+    participant VDB as VectorDB (ChromaDB)
+
+    User->>UP: Select files + Upload
+    UP->>UF: uploadFiles(files)
+    UF->>API: uploadFiles(formData)
+    API->>Router: POST /api/chat/upload_files (multipart)
+    Router->>CS: ingest_files(files)
+    CS->>VDB: Add documents + embeddings
+    VDB-->>CS: OK
+    CS-->>Router: UploadFilesResponse
+    Router-->>API: 200 OK + {uploaded_files}
+    API-->>UF: response
+    UF-->>UP: Update UI
+    UP-->>User: "Files uploaded successfully"
+    

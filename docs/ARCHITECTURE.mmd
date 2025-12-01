@@ -1,0 +1,66 @@
+graph TB
+    subgraph "Frontend (React + Vite)"
+        UI[User Interface]
+        subgraph "Pages"
+            CLP[ChatListPage.jsx]
+            CP[ChatPage.jsx]
+            UP[UploadPage.jsx]
+        end
+        subgraph "Components"
+            CW[ChatWindow.jsx]
+            CM[ChatMessages.jsx]
+            CB[ChatBubble.jsx]
+            CI[ChatInput.jsx]
+            HD[Header.jsx]
+            SM[StatusMessage.jsx]
+        end
+        subgraph "Hooks"
+            UC[useChat.js]
+            UF[useFileUpload.js]
+            UL[useListCollectionItems.js]
+        end
+        subgraph "Services"
+            API[api.js<br/>Axios Client]
+        end
+    end
+
+    subgraph "Backend (FastAPI)"
+        subgraph "API Layer"
+            ROUTER[chat.py<br/>API Router]
+        end
+        subgraph "Services"
+            CS[ChatService]
+            DAL[MongoDAL<br/>Data Access Layer]
+        end
+        subgraph "Core"
+            MAIN[main.py<br/>FastAPI App]
+            MONGO[mongodb.py<br/>Lifespan]
+            CONFIG[config.py]
+        end
+        subgraph "Models"
+            SCHEMAS[chat_schemas.py<br/>Pydantic Models]
+        end
+    end
+
+    subgraph "External Services"
+        MONGODB[(MongoDB<br/>Railway)]
+        AZURE[Azure OpenAI]
+        MCP[MCP Servers<br/>RAG Agent]
+    end
+
+    UI --> CLP & CP & UP
+    CLP --> UC
+    CP --> CW
+    UP --> UF
+    CW --> CM & CI
+    CM --> CB
+    UC & UF & UL --> API
+
+    API -->|HTTP/SSE| ROUTER
+    ROUTER --> CS & DAL
+    CS --> MCP
+    MCP --> AZURE
+    DAL --> MONGODB
+    MAIN --> ROUTER
+    MAIN --> MONGO
+    MONGO -->|Lifespan| MONGODB

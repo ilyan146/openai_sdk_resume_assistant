@@ -1,0 +1,32 @@
+flowchart LR
+    subgraph Frontend
+        A[User Action] --> B[React Component]
+        B --> C[Custom Hook]
+        C --> D[api.js Axios]
+    end
+    
+    subgraph Network
+        D -->|HTTPS| E[Railway Backend]
+    end
+    
+    subgraph Backend
+        E --> F[FastAPI Router]
+        F --> G{Route Type}
+        G -->|CRUD| H[MongoDAL]
+        G -->|AI| I[ChatService]
+        I --> J[MCP/RAG Agent]
+        J --> K[Azure OpenAI]
+        H --> L[(MongoDB)]
+    end
+    
+    subgraph Response
+        L --> H
+        H --> F
+        K --> J
+        J --> I
+        I --> F
+        F -->|JSON/SSE| D
+        D --> C
+        C --> B
+        B --> A
+    end

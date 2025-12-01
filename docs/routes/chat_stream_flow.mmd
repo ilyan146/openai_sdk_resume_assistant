@@ -1,0 +1,47 @@
+sequenceDiagram
+    participant User as User
+    participant CP as ChatPage.jsx
+    participant UC as useChat.js
+    participant API as api.js
+    participant Router as chat.py
+    participant CS as ChatService
+    participant DAL as MongoDAL
+    participant MCP as MCP Server (RAG)
+    participant Azure as Azure OpenAI
+    participant DB as MongoDB
+
+    User->>CP: Type message + Send
+    CP->>UC: sendMessage(text)
+    UC->>API: askStream(chatId, message)
+    API->>Router: POST /api/chat/ask_stream
+    
+    Router->>DAL: get_chat_memory(chatId)
+    DAL->>DB: find_one({_id: chatId})
+    DB-->>DAL: ChatMemory
+    DAL-->>Router: ChatMemory (validate exists)
+    
+    Router->>DAL: add_message_to_chat(chatId, user_msg)
+    DAL->>DB: update_one (push user message)
+    DB-->>DAL: OK
+    
+    Router->>CS: get_agent_response_stream(message)
+    CS->>MCP: Spawn MCP subprocess (env vars merged)
+    MCP->>Azure: Query with RAG context
+    
+    loop Streaming Response
+        Azure-->>MCP: Token chunk
+        MCP-->>CS: Token chunk
+        CS-->>Router: yield chunk
+        Router-->>API: SSE: data: chunk
+        API-->>UC: onChunk(chunk)
+        UC-->>CP: Update UI (streaming)
+    end
+    
+    Router->>DAL: add_message_to_chat(chatId, assistant_msg)
+    DAL->>DB: update_one (push assistant message)
+    DB-->>DAL: OK
+    
+    Router-->>API: Stream complete
+    API-->>UC: Done
+    UC-->>CP: Final render
+    CP-->>User: See complete response
