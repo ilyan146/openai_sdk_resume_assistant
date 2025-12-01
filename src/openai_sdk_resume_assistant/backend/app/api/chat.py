@@ -29,12 +29,20 @@ async def ask_question_stream(request: QuestionRequest, fastapi_request: Request
     if not chat:
         raise HTTPException(status_code=404, detail="Chat memory not found")
 
+    # Debug log
+    print(f"[DEBUG] Received chat_history: {len(request.chat_history)} messages")
+    for msg in request.chat_history:
+        print(f"  - {msg.role}: {msg.content[:50]}...")
+
     await fastapi_request.app.mongo_dal.add_message_to_chat(request.chat_id, role="user", content=request.question)
 
     async def event_generator():
         full_response = ""
         try:
-            async for chunk in service.get_agent_response_stream(request.question):
+            async for chunk in service.get_agent_response_stream(
+                request.question,
+                chat_history=request.chat_history,
+            ):
                 full_response += chunk
                 # Send as JSON for easier parsing on frontend
                 yield f"data: {json.dumps({'chunk': chunk})}\n\n"
@@ -104,6 +112,15 @@ async def get_chat_memory(chat_id: str, request: Request) -> ChatMemory:
     if not chat:
         raise HTTPException(status_code=404, detail="Chat memory not found")
     return chat
+
+
+@router.delete("/chat_memory/{chat_id}", status_code=status.HTTP_200_OK)
+async def delete_chat_memory(chat_id: str, request: Request) -> dict:
+    """Delete a chat memory by ID"""
+    deleted = await request.app.mongo_dal.delete_chat_memory(chat_id)
+    if not deleted:
+        raise HTTPException(status_code=404, detail="Chat memory not found")
+    return {"message": "Chat deleted successfully", "chat_id": chat_id}
 
 
 @router.get("/all_chats")
