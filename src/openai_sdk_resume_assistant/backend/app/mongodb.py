@@ -1,7 +1,10 @@
 import os
 from contextlib import asynccontextmanager
 
+from beanie import Document, init_beanie
 from fastapi import FastAPI
+from fastapi_users.db import BeanieBaseUser
+from fastapi_users_db_beanie import BeanieUserDatabase
 from motor.motor_asyncio import AsyncIOMotorClient
 
 from openai_sdk_resume_assistant.backend.app.services.data_access_layer import MongoDAL
@@ -15,7 +18,7 @@ DATABASE_NAME = os.environ.get("DATABASE_NAME", "resume_db")
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    client = AsyncIOMotorClient(MONGODB_URI)
+    client = AsyncIOMotorClient(MONGODB_URI, uuidRepresentation="standard")
     # database = client.get_default_database()  # Connect to default database from URI
     database = client[DATABASE_NAME]
 
@@ -24,9 +27,23 @@ async def lifespan(app: FastAPI):
     if int(pong.get("ok", 0)) != 1:
         raise Exception("Cluster connection is not okay!")
 
+    await init_beanie(
+        database=database,  # type:ignore
+        document_models=[User],
+    )
+
     chat_mem_collection = database.get_collection(COLLECTION_NAME)
     app.mongo_dal = MongoDAL(chat_mem_collection)  # type: ignore
 
     yield
 
     client.close()
+
+
+# Adding User objects
+class User(BeanieBaseUser, Document):
+    pass
+
+
+async def get_user_db():
+    yield BeanieUserDatabase(User)  # type: ignore
