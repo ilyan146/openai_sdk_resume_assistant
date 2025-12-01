@@ -1,12 +1,13 @@
-import axios from 'axios';
+// import axios from 'axios';
 
 
-// Debug: Log the API URL
-console.log('VITE_API_URL:', import.meta.env.VITE_API_URL);
+// // Debug: Log the API URL
+// console.log('VITE_API_URL:', import.meta.env.VITE_API_URL);
 
-const api = axios.create({
-    baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8000',
-});
+// const api = axios.create({
+//     baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8000',
+// });
+import api from './apiClient';
 
 // Create new chat
 export const createChat = async (chatName) => {
