@@ -21,7 +21,6 @@ ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://localhost:5173",
     FRONTEND_URL,
-    "https://openai-sdk-resume-assistant.vercel.app",
 ]  # vercel hosted frontend end point
 app.add_middleware(
     CORSMiddleware,
